@@ -6,8 +6,10 @@ The app, loader and API never import it for anything but offline checks.
     python -m backend.engine.scorecard data/full_week
 
 An answer-key event counts as found if detect() returned an event on the same asset and category
-whose onset is within ONSET_TOLERANCE_S. "Minutes late" = detected_unix - true onset.
-Extra detected events that match nothing are false alarms.
+whose time span overlaps the labelled window (it may start up to ONSET_SLACK_S early). Slow problems
+(leaks, wear) ramp up gradually, so we do not demand the onset to the minute; instead we report
+"minutes late" = detected_unix - true onset (how long the operator waited) and "onset error" =
+our estimated onset - true onset. Extra detected events that match nothing are false alarms.
 """
 from __future__ import annotations
 
@@ -18,7 +20,7 @@ from pathlib import Path
 from .detect import detect
 from .loader import load
 
-ONSET_TOLERANCE_S = 3600  # onset of a found event must be within 1 h of the labelled onset
+ONSET_SLACK_S = 3600  # an event may start up to 1 h before the labelled onset and still count
 
 
 def load_answer_key(folder) -> list[dict]:
@@ -36,8 +38,10 @@ def score(folder, t: int | None = None, ds=None) -> dict:
     for e in truth:
         hit = None
         for d in found_events:
+            d_end = d["end_unix"] if d["end_unix"] is not None else t
             if (d["asset_id"] == e["asset"] and d["category"] == e["category"]
-                    and abs(d["onset_unix"] - e["onset_unix"]) <= ONSET_TOLERANCE_S
+                    and d["onset_unix"] <= min(e["end_unix"] if e.get("end_unix") is not None else t, t) and d_end >= e["onset_unix"] - ONSET_SLACK_S
+                    and d["onset_unix"] >= e["onset_unix"] - ONSET_SLACK_S
                     and d["event_id"] not in matched_ids):
                 hit = d
                 break
