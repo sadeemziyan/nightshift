@@ -5,7 +5,7 @@
    either as a Tailwind class (bg-surface, text-muted, border-line...)
    or as a CSS variable (var(--color-data)) for charts and the map.
    ------------------------------------------------------------------ */
-@theme {
+@theme static {
   /* neutrals */
   --color-ink: #060a13; /* page */
   --color-surface: #0d1424; /* panels */
@@ -113,7 +113,7 @@ h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
     inset: -1px;
     pointer-events: none;
     border-radius: inherit;
-    --t: var(--color-line-strong);
+    --t: var(--tick, var(--color-line-strong));
     --s: 9px;
     background:
       linear-gradient(var(--t), var(--t)) top left / var(--s) 1px no-repeat,
@@ -325,7 +325,7 @@ input[type="range"].slider {
    ------------------------------------------------------------------ */
 .ns-map {
   --xy-background-color: var(--color-ink);
-  --xy-background-pattern-color: #1c2740;
+  --xy-background-pattern-color: var(--color-line);
   --xy-controls-button-background-color: var(--color-surface);
   --xy-controls-button-background-color-hover: var(--color-surface-2);
   --xy-controls-button-color: var(--color-fg);
@@ -411,3 +411,6 @@ input[type="range"].slider {
   .ns-node-bad { box-shadow: 0 0 0 2px rgb(248 113 113 / 0.35); }
   *, ::before, ::after { transition-duration: 0.01ms !important; }
 }
+
+/* cyan glow for the running Play button */
+.glow-data { box-shadow: 0 0 0 1px var(--color-data), 0 0 18px rgb(34 211 238 / 0.5); }
