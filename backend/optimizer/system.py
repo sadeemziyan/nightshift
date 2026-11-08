@@ -22,6 +22,7 @@ import itertools
 from dataclasses import replace
 from datetime import datetime, timezone
 
+from . import risk as risk_mod
 from .single import _by_id, build_problem, optimize
 
 MAX_CANDIDATES_PER_FACILITY = 8   # best options kept per tank before mixing
@@ -80,8 +81,9 @@ def _one_at_a_time(facilities: list, fleet: int) -> dict:
     left, total, trucks_used, parts = fleet, 0.0, 0, []
     wanted = 0
     for fac in facilities:
-        wanted += min(fac["cands"], key=lambda c: (c["cost"], c["trips"]))["trucks"]
-        options = [c for c in fac["cands"] if c["trucks"] <= left]
+        pool = fac.get("nominal", fac["cands"])     # cost-optimal options, whatever the risk setting
+        wanted += min(pool, key=lambda c: (c["cost"], c["trips"]))["trucks"]
+        options = [c for c in pool if c["trucks"] <= left]
         pick = min(options, key=lambda c: (c["cost"], c["trips"]))
         left -= pick["trucks"]
         trucks_used += pick["trucks"]
@@ -92,12 +94,14 @@ def _one_at_a_time(facilities: list, fleet: int) -> dict:
 
 
 def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
-                *, step_min: int = 1) -> dict:
+                *, step_min: int = 1, risk: float | None = None) -> dict:
     """Plans for every failing tank of one system, planned together.
 
     rows: forecast() rows for this system's pump failures in progress at t. Each
     needs facility_id, event_id, level_pct, well_water_bpd, elapsed_min and
-    already_shut_in.
+    already_shut_in. A row may also carry inflow_range (M4): then every plan gets
+    a shutdown_risk, and `risk` (0 to 1) asks for the cheapest plans whose chance
+    of avoiding shutdown is at least that, e.g. 0.95 allows at most 5% risk.
     """
     fleet = int(_by_id(ops["systems"], system_id)["emergency_fleet_size"])
 
@@ -113,10 +117,39 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
         )
         problem = replace(problem, fleet_size=fleet)
         cands = _candidates(problem, step_min)
-        facilities.append({"row": row, "problem": problem, "cands": cands,
-                           "baseline": next(c for c in cands if c["kind"] == "do_nothing")})
+        baseline = next(c for c in cands if c["kind"] == "do_nothing")
+        nominal = list(cands)
+        rng = row.get("inflow_range")
+        mults = None
+        if rng:
+            try:
+                mults = risk_mod.multipliers(rng)
+            except (KeyError, ValueError, ZeroDivisionError):
+                mults = None                       # no usable forecast range: no risk numbers
+        if mults and risk is not None:
+            seen = {risk_mod._key(c) for c in cands}
+            for extra in risk_mod.robust_candidates(problem, rng, step_min):
+                if risk_mod._key(extra) not in seen:
+                    seen.add(risk_mod._key(extra))
+                    cands.append(extra)
+        for c in cands:
+            c["shutdown_risk"] = risk_mod.plan_risk(problem, c, mults) if mults else None
+        if mults and risk is not None:
+            cands = [c for c in risk_mod.pareto(cands) if c is not baseline] + [baseline]
+        facilities.append({"row": row, "problem": problem, "cands": cands, "nominal": nominal,
+                           "baseline": baseline, "risk_known": bool(mults)})
 
     do_nothing_cost = sum(f["baseline"]["cost"] for f in facilities)
+
+    risk_known = all(f["risk_known"] for f in facilities)
+
+    def mix_risk(combo):
+        if not risk_known:
+            return None
+        safe = 1.0
+        for c in combo:
+            safe *= 1.0 - c["shutdown_risk"]
+        return 1.0 - safe
 
     mixes = []
     for combo in itertools.product(*[f["cands"] for f in facilities]):
@@ -125,7 +158,16 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
         mixes.append((sum(c["cost"] for c in combo), sum(c["trips"] for c in combo), combo))
     mixes.sort(key=lambda m: (m[0], m[1]))
 
-    chosen = mixes[:TOP_PLANS]
+    risk_applied = risk is not None and risk_known
+    limit = None if not risk_applied else 1.0 - float(risk)
+    meets_all = True
+    if risk_applied:
+        ok = [m for m in mixes if mix_risk(m[2]) <= limit + 1e-9]
+        meets_all = bool(ok)
+        chosen = ok[:TOP_PLANS] if ok else sorted(mixes, key=lambda m: (mix_risk(m[2]), m[0]))[:TOP_PLANS]
+    else:
+        chosen = mixes[:TOP_PLANS]
+    cheapest_cost = mixes[0][0] if mixes else do_nothing_cost
     all_idle = tuple(f["baseline"] for f in facilities)
     if not any(m[2] == all_idle for m in chosen):
         chosen.append((do_nothing_cost, 0, all_idle))
@@ -163,6 +205,7 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
                 "peak_level_pct": plan.get("peak_level_pct"),
                 "tank_trips_in_min": plan.get("shutdown_in_min"),
                 "keeps_tank_under_shutdown": plan["keeps_under_shutdown"],
+                "shutdown_risk": None if plan.get("shutdown_risk") is None else round(plan["shutdown_risk"], 3),
                 "actions": _actions(fid, plan),
             })
         # trucks first, then shut-ins, so the screen reads in dispatch order
@@ -179,7 +222,8 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
             "actions": actions,
             "trucks_used": sum(pf["trucks"] for pf in per_fac),
             "keeps_tank_under_shutdown": keeps,
-            "shutdown_risk": None,
+            "shutdown_risk": None if mix_risk(combo) is None else round(mix_risk(combo), 3),
+            "meets_risk": None if not risk_applied else bool(mix_risk(combo) <= limit + 1e-9),
             "per_facility": per_fac,
         })
 
@@ -194,11 +238,16 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
         "event_ids": [f["row"]["event_id"] for f in facilities],
         "do_nothing_cost_usd": round(do_nothing_cost, 2),
         "planned_separately": separate,
+        "risk_level": risk if risk_applied else None,
+        "cost_of_safety_usd": round(max(0.0, plans[0]["cost_usd"] - cheapest_cost), 2) if risk_applied and meets_all else None,
+        "risk_note": None if risk is None or risk_applied else
+        "no inflow forecast available (M4), so these are the cost-optimal plans without risk numbers",
         "plans": plans,
     }
 
 
-def plan_all(network: dict, ops: dict, rows: list, t: int, *, step_min: int = 1) -> dict:
+def plan_all(network: dict, ops: dict, rows: list, t: int, *, step_min: int = 1,
+             risk: float | None = None) -> dict:
     """Plans for every system that has a pump failure in progress.
 
     rows: engine.forecast(ds, t) output (pump failures in progress at t only).
@@ -206,6 +255,6 @@ def plan_all(network: dict, ops: dict, rows: list, t: int, *, step_min: int = 1)
     by_system: dict = {}
     for row in rows:
         by_system.setdefault(row["system_id"], []).append(row)
-    systems = [plan_system(network, ops, sid, rs, t, step_min=step_min)
+    systems = [plan_system(network, ops, sid, rs, t, step_min=step_min, risk=risk)
                for sid, rs in by_system.items()]
     return {"t": int(t), "systems": systems}
