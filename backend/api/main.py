@@ -8,7 +8,9 @@ network.json, ops.json and telemetry.csv up to the time `t` (unix seconds).
 from __future__ import annotations
 
 import json
+import logging
 import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -23,10 +25,15 @@ from backend.api.notify import send_text
 from backend.engine.detect import detect
 from backend.engine.forecast import forecast
 from backend.engine.loader import Dataset, iso, load
+from backend.ml.detect import baseline as m1
+from backend.ml.detect import enrich
+from backend.ml.forecast import forecast as m4
 from backend.optimizer.system import plan_all
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
+
+log = logging.getLogger(__name__)
 
 app = FastAPI(title="Nightshift API")
 
@@ -62,6 +69,7 @@ _lock = threading.Lock()
 _cache: dict[str, Dataset] = {}
 _current: dict[str, str | None] = {"name": None}
 _results: dict[tuple, object] = {}     # small memo so the UI can poll without recomputing
+_model_info: dict[str, dict] = {}      # per dataset: how the model fit at /load went
 
 
 def dataset_folders() -> list[str]:
@@ -130,8 +138,33 @@ def load_dataset(dataset: str = Query(...)):
             _cache[dataset] = load(str(DATA_DIR / dataset))
         _current["name"] = dataset
     ds = _cache[dataset]
+    info = _fit_models(ds)
     return {**{k: v for k, v in ds.summary().items()},
-            "models": {"status": "rules-only", "seconds": 0.0, "pumps_calibrated": 0}}
+            "models": {"status": info["status"], "seconds": info["seconds"],
+                       "pumps_calibrated": info["pumps_calibrated"]}}
+
+
+def _fit_models(ds: Dataset) -> dict:
+    """Fit the learned baselines (M1) for the loaded dataset. Never raises: on any error the app
+    keeps running on rules alone and says so (status "rules-only")."""
+    t0 = time.time()
+    info = {"status": "rules-only", "seconds": 0.0, "pumps_calibrated": 0,
+            "pumps_total": len(ds.facilities), "error": None}
+    info["m4_ready"] = 0
+    try:
+        models = enrich._models(ds, ds.now_unix)
+        info["pumps_calibrated"] = sum(1 for fb in models.values() if fb.ready)
+        info["status"] = "ready" if info["pumps_calibrated"] else "rules-only"
+    except Exception as exc:                       # the rules still work without models
+        log.exception("model fit failed; running on rules only")
+        info["error"] = f"{type(exc).__name__}: {exc}"
+    try:
+        info["m4_ready"] = m4.fit_all(ds)["ready"]
+    except Exception:
+        log.exception("M4 fit failed; countdown ranges stay empty")
+    info["seconds"] = round(time.time() - t0, 2)
+    _model_info[ds.folder.name] = info
+    return info
 
 
 @app.get("/network")
@@ -197,15 +230,29 @@ def state(t: int | None = None):
 
 # ---- forecast and plans -----------------------------------------------------
 def _events(ds: Dataset, t: int) -> list[dict]:
-    return _memo("events", ds, (t,), lambda: detect(ds, t))
+    def run():
+        try:
+            return enrich.detect_with_models(ds, t)    # adds score, a reason and source "model+rules"
+        except Exception:
+            log.exception("model detection failed; using rules only")
+            return detect(ds, t)
+    return _memo("events", ds, (t,), run)
 
 
 def _forecast_rows(ds: Dataset, t: int) -> list[dict]:
-    return _memo("forecast", ds, (t,), lambda: forecast(ds, t, _events(ds, t)))
+    def run():
+        rows = forecast(ds, t, _events(ds, t))
+        try:
+            return m4.add_ranges(ds, t, rows)         # M4: p10 / p90 around the countdown
+        except Exception:
+            log.exception("M4 failed; countdown has no range")
+            return rows
+    return _memo("forecast", ds, (t,), run)
 
 
-def _plans(ds: Dataset, t: int) -> dict:
-    return _memo("plan", ds, (t,), lambda: plan_all(ds.network, ds.ops, _forecast_rows(ds, t), t))
+def _plans(ds: Dataset, t: int, risk: float | None = None) -> dict:
+    return _memo("plan", ds, (t, risk),
+                 lambda: plan_all(ds.network, ds.ops, _forecast_rows(ds, t), t, risk=risk))
 
 
 @app.get("/forecast")
@@ -217,9 +264,11 @@ def forecast_endpoint(t: int | None = None):
 
 @app.get("/plan")
 def plan_endpoint(t: int | None = None, risk: float | None = Query(None, ge=0, le=1)):
-    # `risk` is accepted now so the contract is stable; the risk-aware planner (M5) comes later.
+    """Ranked plans per system. Default: cheapest first. With `risk` (for example 0.95): the cheapest plans
+    whose chance of avoiding shutdown is at least that, found against M4's inflow range (M5). Every plan
+    carries its shutdown_risk when M4 is available."""
     ds = current()
-    return _plans(ds, _t(ds, t))
+    return _plans(ds, _t(ds, t), risk)
 
 
 # ---- alerts -----------------------------------------------------------------
@@ -269,6 +318,7 @@ def alerts(t: int | None = None, include_resolved: bool = False):
             hours = None
         row = {
             **ev,
+            "reasons": list(ev.get("evidence") or []),
             "level_pct": _num(ds.latest(fac["tank"]["id"], "level_pct", t)),
             "hours_to_limit": hours,
             "urgency": _urgency(ev["category"], (hours or {}).get("p50")) if ongoing else None,
@@ -313,13 +363,14 @@ class ApproveBody(BaseModel):
     event_id: str
     plan_rank: int = 1
     t: int | None = None     # ours: the console's current time; defaults to the dataset's "now"
+    risk: float | None = None  # ours: the risk level the console is showing (same as GET /plan?risk=)
 
 
 @app.post("/approve")
 def approve(body: ApproveBody):
     ds = current()
     t = _t(ds, body.t)
-    syst = next((s for s in _plans(ds, t)["systems"] if body.event_id in s["event_ids"]), None)
+    syst = next((s for s in _plans(ds, t, body.risk)["systems"] if body.event_id in s["event_ids"]), None)
     if syst is None:
         raise HTTPException(404, f"no pump failure in progress with event_id {body.event_id!r} at t={t}")
     if not 1 <= body.plan_rank <= len(syst["plans"]):
@@ -349,9 +400,17 @@ def approve(body: ApproveBody):
 @app.get("/model/status")
 def model_status():
     ds = current()
-    return {"dataset": ds.folder.name, "status": "rules-only",
-            "models": {m: {"ready": False, "fit_seconds": None} for m in ("M1", "M2", "M3", "M4")},
-            "pumps_calibrated": 0, "pumps_total": len(ds.facilities)}
+    info = _model_info.get(ds.folder.name) or _fit_models(ds)
+    ready = info["status"] == "ready"
+    secs = info["seconds"] if ready else None
+    return {"dataset": ds.folder.name, "status": info["status"],
+            "models": {"M1": {"ready": ready, "fit_seconds": secs},      # learned normal per pump
+                       "M2": {"ready": ready, "fit_seconds": secs},      # drift detector (runs on M1)
+                       "M3": {"ready": False, "fit_seconds": None},      # classifier: not built yet
+                       "M4": {"ready": info.get("m4_ready", 0) > 0,      # forecaster: range around the countdown
+                              "fit_seconds": info["seconds"] if info.get("m4_ready", 0) > 0 else None}},
+            "pumps_calibrated": info["pumps_calibrated"], "pumps_total": info["pumps_total"],
+            "error": info["error"]}
 
 
 @app.get("/model/eval")
@@ -366,8 +425,23 @@ def model_eval():
 
 
 @app.get("/model/baseline")
-def model_baseline(id: str, metric: str = "flow_bpd", t: int | None = None, hours: float = 24):
-    raise HTTPException(501, "learned baselines (M1) are not built yet")
+def model_baseline(id: str, metric: str = "flow_bpd", t: int | None = None, hours: float = Query(24, gt=0, le=168)):
+    """Actual vs learned-normal series with a band, for the pump and pipeline charts."""
+    ds = current()
+    t = _t(ds, t)
+    if metric not in m1.METRIC_TO_SENSOR:
+        raise HTTPException(400, f"metric must be one of: {', '.join(m1.METRIC_TO_SENSOR)}")
+    fid = ds.facility_of(id)
+    if fid is None:
+        raise HTTPException(404, f"unknown asset {id!r}")
+    kind = m1.METRIC_TO_SENSOR[metric][1]
+    if ds.facility(fid)[kind]["id"] != id:
+        raise HTTPException(400, f"{metric} is a {kind} metric, but {id!r} is not a {kind}")
+    try:
+        return m1.chart_points(ds, id, metric, t, enrich._models(ds, t), hours)
+    except Exception as exc:
+        log.exception("learned baseline failed")
+        raise HTTPException(503, f"learned baseline unavailable ({type(exc).__name__}); rules-only mode")
 
 
 @app.post("/simulate/inject")
