@@ -21,7 +21,7 @@ from backend.engine.loader import Dataset
 
 from . import baseline, enrich
 from .features import window_features
-from .m3_core import CLASSES, predict_proba
+from .m3_core import CLASSES, explain, predict_proba
 
 log = logging.getLogger(__name__)
 MODEL_PATH = Path(__file__).resolve().parents[3] / "models" / "m3.joblib"
@@ -40,13 +40,17 @@ def _bundle():
     return _BUNDLE["b"]
 
 
-def _probs(ds: Dataset, models: dict, facility_id: str, t: int, bundle: dict) -> dict | None:
+def _probs(ds: Dataset, models: dict, facility_id: str, t: int, bundle: dict, why: bool = False) -> dict | None:
+    """{class: probability}; with why=True the result is (probabilities, factors) where factors explain the top call."""
     fr = baseline.residuals(ds, facility_id, t, models)
     x = window_features(fr, t, ds.interval_s)
     if x is None:
         return None
     p = predict_proba(bundle, [x])[0]
-    return {c: round(float(v), 3) for c, v in zip(CLASSES, p)}
+    probs = {c: round(float(v), 3) for c, v in zip(CLASSES, p)}
+    if not why:
+        return probs
+    return probs, explain(bundle, x, max(probs, key=probs.get))
 
 
 def detect_with_m3(ds: Dataset, t: int | None = None) -> list[dict]:
@@ -65,14 +69,15 @@ def detect_with_m3(ds: Dataset, t: int | None = None) -> list[dict]:
         try:
             # score the facility at the end of the event if it is over, otherwise now
             at = min(t, ev["end_unix"]) if ev["end_unix"] is not None else t
-            probs = _probs(ds, models, ev["facility_id"], at, bundle)
-            if probs is None:
+            got = _probs(ds, models, ev["facility_id"], at, bundle, why=True)
+            if got is None:
                 out.append(ev)
                 continue
+            probs, factors = got
             call = max(probs, key=probs.get)
             agrees = call == ev["category"]
             e = dict(ev)
-            e["m3"] = {"probs": probs, "call": call, "agrees": agrees}
+            e["m3"] = {"probs": probs, "call": call, "agrees": agrees, "factors": factors}
             if ev["status"] == "ongoing":
                 if agrees:
                     e["confidence"] = round(min(0.99, max(ev["confidence"], probs[call])), 2)
@@ -102,13 +107,14 @@ def early_warnings(ds: Dataset, t: int | None = None, threshold: float = 0.8) ->
         for fid in ds.facilities:
             if not models[fid].ready:
                 continue
-            probs = _probs(ds, models, fid, t, bundle)
-            if not probs:
+            got = _probs(ds, models, fid, t, bundle, why=True)
+            if not got:
                 continue
+            probs, factors = got
             call = max(probs, key=probs.get)
             if call != "normal" and probs[call] >= threshold and (fid, call) not in ongoing:
                 out.append({"facility_id": fid, "system_id": ds.facility(fid)["system_id"], "category": call,
-                            "probability": probs[call], "probs": probs, "source": "model", "t": t})
+                            "probability": probs[call], "probs": probs, "factors": factors, "source": "model", "t": t})
         return sorted(out, key=lambda w: -w["probability"])
     except Exception:
         log.exception("early_warnings failed; returning none")

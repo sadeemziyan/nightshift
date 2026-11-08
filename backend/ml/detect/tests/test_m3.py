@@ -138,6 +138,27 @@ def test_only_the_offline_scripts_may_open_the_answer_key():
         assert not hits, (str(path), hits)
 
 
+def test_explanations_name_the_sensor_that_drives_each_call():
+    ds, models, spans = world()
+    rng = np.random.default_rng(4)
+    rows = simulate.training_rows(ds, models, simulate.sample_cases(ds, 90, rng, spans=spans), rng, spans=spans)
+    bundle = classifier.fit_classifier(rows)
+    from backend.ml.detect.m3_core import explain
+    want = {"pipeline_leak": "pipeline pressure", "pump_failure": "pump", "pump_degradation": "pump"}
+    for kind, word in want.items():
+        c = one_case(kind)
+        sim = simulate.inject(ds, c.facility_id, kind, c.onset_unix, 0.2, 2.0, 8.0)
+        t = c.onset_unix + (10 if kind != "pump_failure" else 2) * 3600
+        x = window_features(baseline.residuals(sim, c.facility_id, t, models), t, ds.interval_s)
+        p = classifier.predict_proba(bundle, [x])[0]
+        call = classifier.CLASSES[int(p.argmax())]
+        if call != kind:                     # a mild simulated case may not be called yet; the explanation is only for calls
+            continue
+        why = explain(bundle, x, call)
+        assert why and word in why[0]["factor"] and why[0]["impact"] > 0.05, (kind, why)
+    assert explain(bundle, x, "normal") == []
+
+
 def test_blend_adds_a_second_opinion_and_falls_back_without_the_model():
     from backend.ml.detect import blend, enrich
     ds, _, _ = world()
