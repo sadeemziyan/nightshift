@@ -1,0 +1,25 @@
+{
+  "dataset": "full_week",
+  "status": "fitting",
+  "models": {
+    "M1": {
+      "ready": true,
+      "fit_seconds": 4.2
+    },
+    "M2": {
+      "ready": false,
+      "fit_seconds": null
+    },
+    "M3": {
+      "ready": false,
+      "fit_seconds": null
+    },
+    "M4": {
+      "ready": false,
+      "fit_seconds": null
+    }
+  },
+  "pumps_calibrated": 6,
+  "pumps_total": 15,
+  "mock_notice": "PLACEHOLDER: shows the 'fitting' state (6 of 15 pumps calibrated) for the progress step."
+}

@@ -1,0 +1,591 @@
+{
+  "asset_id": "S2_PUMP_B",
+  "metric": "flow_bpd",
+  "unit": "bpd",
+  "points": [
+    {
+      "ts_unix": 1791432300,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791432600,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791432900,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791433200,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791433500,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791433800,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791434100,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791434400,
+      "actual": 0.0,
+      "expected": 0.0,
+      "lower": -37.66,
+      "upper": 37.66,
+      "score": 0.0
+    },
+    {
+      "ts_unix": 1791434700,
+      "actual": 2408.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.67
+    },
+    {
+      "ts_unix": 1791435000,
+      "actual": 2400.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.07
+    },
+    {
+      "ts_unix": 1791435300,
+      "actual": 2403.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.31
+    },
+    {
+      "ts_unix": 1791435600,
+      "actual": 2377.1,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.79
+    },
+    {
+      "ts_unix": 1791435900,
+      "actual": 2420.2,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.64
+    },
+    {
+      "ts_unix": 1791436200,
+      "actual": 2394.3,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.42
+    },
+    {
+      "ts_unix": 1791436500,
+      "actual": 2397.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.17
+    },
+    {
+      "ts_unix": 1791436800,
+      "actual": 2389.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.79
+    },
+    {
+      "ts_unix": 1791437100,
+      "actual": 2402.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.22
+    },
+    {
+      "ts_unix": 1791437400,
+      "actual": 2385.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.16
+    },
+    {
+      "ts_unix": 1791437700,
+      "actual": 2381.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.43
+    },
+    {
+      "ts_unix": 1791438000,
+      "actual": 2415.9,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.3
+    },
+    {
+      "ts_unix": 1791438300,
+      "actual": 2400.9,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.1
+    },
+    {
+      "ts_unix": 1791438600,
+      "actual": 2408.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.72
+    },
+    {
+      "ts_unix": 1791438900,
+      "actual": 2404.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.41
+    },
+    {
+      "ts_unix": 1791439200,
+      "actual": 2393.3,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.5
+    },
+    {
+      "ts_unix": 1791439500,
+      "actual": 2410.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.86
+    },
+    {
+      "ts_unix": 1791439800,
+      "actual": 2423.3,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.89
+    },
+    {
+      "ts_unix": 1791440100,
+      "actual": 2395.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.32
+    },
+    {
+      "ts_unix": 1791440400,
+      "actual": 2410.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.88
+    },
+    {
+      "ts_unix": 1791440700,
+      "actual": 2390.1,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.76
+    },
+    {
+      "ts_unix": 1791441000,
+      "actual": 2412.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.04
+    },
+    {
+      "ts_unix": 1791441300,
+      "actual": 2422.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.85
+    },
+    {
+      "ts_unix": 1791441600,
+      "actual": 2406.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.55
+    },
+    {
+      "ts_unix": 1791441900,
+      "actual": 2391.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.62
+    },
+    {
+      "ts_unix": 1791442200,
+      "actual": 2422.2,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.8
+    },
+    {
+      "ts_unix": 1791442500,
+      "actual": 2399.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.01
+    },
+    {
+      "ts_unix": 1791442800,
+      "actual": 2387.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.95
+    },
+    {
+      "ts_unix": 1791443100,
+      "actual": 2389.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.81
+    },
+    {
+      "ts_unix": 1791443400,
+      "actual": 2399.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.02
+    },
+    {
+      "ts_unix": 1791443700,
+      "actual": 2400.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.1
+    },
+    {
+      "ts_unix": 1791444000,
+      "actual": 2398.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.13
+    },
+    {
+      "ts_unix": 1791444300,
+      "actual": 2380.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.52
+    },
+    {
+      "ts_unix": 1791444600,
+      "actual": 2394.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.41
+    },
+    {
+      "ts_unix": 1791444900,
+      "actual": 2418.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.47
+    },
+    {
+      "ts_unix": 1791445200,
+      "actual": 2401.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.14
+    },
+    {
+      "ts_unix": 1791445500,
+      "actual": 2398.9,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.06
+    },
+    {
+      "ts_unix": 1791445800,
+      "actual": 2396.3,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.26
+    },
+    {
+      "ts_unix": 1791446100,
+      "actual": 2398.9,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.06
+    },
+    {
+      "ts_unix": 1791446400,
+      "actual": 2383.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.29
+    },
+    {
+      "ts_unix": 1791446700,
+      "actual": 2413.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.11
+    },
+    {
+      "ts_unix": 1791447000,
+      "actual": 2403.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.32
+    },
+    {
+      "ts_unix": 1791447300,
+      "actual": 2401.5,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.15
+    },
+    {
+      "ts_unix": 1791447600,
+      "actual": 2393.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.49
+    },
+    {
+      "ts_unix": 1791447900,
+      "actual": 2411.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.96
+    },
+    {
+      "ts_unix": 1791448200,
+      "actual": 2390.6,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.72
+    },
+    {
+      "ts_unix": 1791448500,
+      "actual": 2367.7,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 2.54
+    },
+    {
+      "ts_unix": 1791448800,
+      "actual": 2439.4,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 3.17
+    },
+    {
+      "ts_unix": 1791449100,
+      "actual": 2411.2,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.92
+    },
+    {
+      "ts_unix": 1791449400,
+      "actual": 2419.8,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 1.61
+    },
+    {
+      "ts_unix": 1791449700,
+      "actual": 2406.1,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 0.52
+    },
+    {
+      "ts_unix": 1791450000,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791450300,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791450600,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791450900,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791451200,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791451500,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791451800,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791452100,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791452400,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791452700,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791453000,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791453300,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791453600,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    },
+    {
+      "ts_unix": 1791453900,
+      "actual": 0.0,
+      "expected": 2399.6,
+      "lower": 2361.94,
+      "upper": 2437.26,
+      "score": 191.15
+    }
+  ]
+}

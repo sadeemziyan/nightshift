@@ -1,0 +1,688 @@
+{
+  "t": 1791453900,
+  "facilities": [
+    {
+      "id": "S1_FACILITY_A",
+      "system_id": "S1",
+      "inflow_bpd": 2395.6,
+      "shut_in": false
+    },
+    {
+      "id": "S1_FACILITY_B",
+      "system_id": "S1",
+      "inflow_bpd": 2006.0,
+      "shut_in": false
+    },
+    {
+      "id": "S1_FACILITY_C",
+      "system_id": "S1",
+      "inflow_bpd": 1796.0,
+      "shut_in": false
+    },
+    {
+      "id": "S2_FACILITY_A",
+      "system_id": "S2",
+      "inflow_bpd": 2200.7,
+      "shut_in": false
+    },
+    {
+      "id": "S2_FACILITY_B",
+      "system_id": "S2",
+      "inflow_bpd": 1604.5,
+      "shut_in": false
+    },
+    {
+      "id": "S2_FACILITY_C",
+      "system_id": "S2",
+      "inflow_bpd": 1405.9,
+      "shut_in": false
+    },
+    {
+      "id": "S3_FACILITY_A",
+      "system_id": "S3",
+      "inflow_bpd": 1995.4,
+      "shut_in": false
+    },
+    {
+      "id": "S3_FACILITY_B",
+      "system_id": "S3",
+      "inflow_bpd": 1511.2,
+      "shut_in": false
+    },
+    {
+      "id": "S4_FACILITY_A",
+      "system_id": "S4",
+      "inflow_bpd": 1805.1,
+      "shut_in": false
+    },
+    {
+      "id": "S4_FACILITY_B",
+      "system_id": "S4",
+      "inflow_bpd": 1503.1,
+      "shut_in": false
+    },
+    {
+      "id": "S4_FACILITY_C",
+      "system_id": "S4",
+      "inflow_bpd": 2095.5,
+      "shut_in": false
+    },
+    {
+      "id": "S4_FACILITY_D",
+      "system_id": "S4",
+      "inflow_bpd": 1697.4,
+      "shut_in": false
+    },
+    {
+      "id": "S5_FACILITY_A",
+      "system_id": "S5",
+      "inflow_bpd": 1898.3,
+      "shut_in": false
+    },
+    {
+      "id": "S5_FACILITY_B",
+      "system_id": "S5",
+      "inflow_bpd": 1691.9,
+      "shut_in": false
+    },
+    {
+      "id": "S5_FACILITY_C",
+      "system_id": "S5",
+      "inflow_bpd": 1304.9,
+      "shut_in": false
+    }
+  ],
+  "tanks": [
+    {
+      "id": "S1_TANK_A",
+      "facility_id": "S1_FACILITY_A",
+      "level_pct": 58.35,
+      "volume_bbl": 700.2,
+      "capacity_bbl": 1200.0,
+      "state": "normal"
+    },
+    {
+      "id": "S1_TANK_B",
+      "facility_id": "S1_FACILITY_B",
+      "level_pct": 47.52,
+      "volume_bbl": 570.2,
+      "capacity_bbl": 1200.0,
+      "state": "normal"
+    },
+    {
+      "id": "S1_TANK_C",
+      "facility_id": "S1_FACILITY_C",
+      "level_pct": 74.3,
+      "volume_bbl": 594.4,
+      "capacity_bbl": 800.0,
+      "state": "normal"
+    },
+    {
+      "id": "S2_TANK_A",
+      "facility_id": "S2_FACILITY_A",
+      "level_pct": 50.84,
+      "volume_bbl": 508.4,
+      "capacity_bbl": 1000.0,
+      "state": "normal"
+    },
+    {
+      "id": "S2_TANK_B",
+      "facility_id": "S2_FACILITY_B",
+      "level_pct": 60.35,
+      "volume_bbl": 422.5,
+      "capacity_bbl": 700.0,
+      "state": "normal"
+    },
+    {
+      "id": "S2_TANK_C",
+      "facility_id": "S2_FACILITY_C",
+      "level_pct": 50.62,
+      "volume_bbl": 303.7,
+      "capacity_bbl": 600.0,
+      "state": "normal"
+    },
+    {
+      "id": "S3_TANK_A",
+      "facility_id": "S3_FACILITY_A",
+      "level_pct": 59.87,
+      "volume_bbl": 538.8,
+      "capacity_bbl": 900.0,
+      "state": "normal"
+    },
+    {
+      "id": "S3_TANK_B",
+      "facility_id": "S3_FACILITY_B",
+      "level_pct": 36.09,
+      "volume_bbl": 252.6,
+      "capacity_bbl": 700.0,
+      "state": "normal"
+    },
+    {
+      "id": "S4_TANK_A",
+      "facility_id": "S4_FACILITY_A",
+      "level_pct": 37.1,
+      "volume_bbl": 296.8,
+      "capacity_bbl": 800.0,
+      "state": "normal"
+    },
+    {
+      "id": "S4_TANK_B",
+      "facility_id": "S4_FACILITY_B",
+      "level_pct": 63.89,
+      "volume_bbl": 447.2,
+      "capacity_bbl": 700.0,
+      "state": "normal"
+    },
+    {
+      "id": "S4_TANK_C",
+      "facility_id": "S4_FACILITY_C",
+      "level_pct": 53.16,
+      "volume_bbl": 478.4,
+      "capacity_bbl": 900.0,
+      "state": "normal"
+    },
+    {
+      "id": "S4_TANK_D",
+      "facility_id": "S4_FACILITY_D",
+      "level_pct": 61.24,
+      "volume_bbl": 459.3,
+      "capacity_bbl": 750.0,
+      "state": "normal"
+    },
+    {
+      "id": "S5_TANK_A",
+      "facility_id": "S5_FACILITY_A",
+      "level_pct": 57.71,
+      "volume_bbl": 490.5,
+      "capacity_bbl": 850.0,
+      "state": "normal"
+    },
+    {
+      "id": "S5_TANK_B",
+      "facility_id": "S5_FACILITY_B",
+      "level_pct": 52.17,
+      "volume_bbl": 391.3,
+      "capacity_bbl": 750.0,
+      "state": "normal"
+    },
+    {
+      "id": "S5_TANK_C",
+      "facility_id": "S5_FACILITY_C",
+      "level_pct": 50.67,
+      "volume_bbl": 304.0,
+      "capacity_bbl": 600.0,
+      "state": "normal"
+    }
+  ],
+  "pumps": [
+    {
+      "id": "S1_PUMP_A",
+      "facility_id": "S1_FACILITY_A",
+      "status": 0,
+      "flow_bpd": 0.0,
+      "discharge_psi": 1048.7
+    },
+    {
+      "id": "S1_PUMP_B",
+      "facility_id": "S1_FACILITY_B",
+      "status": 1,
+      "flow_bpd": 3029.0,
+      "discharge_psi": 1199.3
+    },
+    {
+      "id": "S1_PUMP_C",
+      "facility_id": "S1_FACILITY_C",
+      "status": 1,
+      "flow_bpd": 2702.7,
+      "discharge_psi": 1205.7
+    },
+    {
+      "id": "S2_PUMP_A",
+      "facility_id": "S2_FACILITY_A",
+      "status": 2,
+      "flow_bpd": 0.0,
+      "discharge_psi": 998.9
+    },
+    {
+      "id": "S2_PUMP_B",
+      "facility_id": "S2_FACILITY_B",
+      "status": 2,
+      "flow_bpd": 0.0,
+      "discharge_psi": 993.9
+    },
+    {
+      "id": "S2_PUMP_C",
+      "facility_id": "S2_FACILITY_C",
+      "status": 2,
+      "flow_bpd": 0.0,
+      "discharge_psi": 998.5
+    },
+    {
+      "id": "S3_PUMP_A",
+      "facility_id": "S3_FACILITY_A",
+      "status": 0,
+      "flow_bpd": 0.0,
+      "discharge_psi": 946.1
+    },
+    {
+      "id": "S3_PUMP_B",
+      "facility_id": "S3_FACILITY_B",
+      "status": 1,
+      "flow_bpd": 2239.9,
+      "discharge_psi": 1102.8
+    },
+    {
+      "id": "S4_PUMP_A",
+      "facility_id": "S4_FACILITY_A",
+      "status": 0,
+      "flow_bpd": 0.0,
+      "discharge_psi": 1101.9
+    },
+    {
+      "id": "S4_PUMP_B",
+      "facility_id": "S4_FACILITY_B",
+      "status": 1,
+      "flow_bpd": 2217.8,
+      "discharge_psi": 1255.6
+    },
+    {
+      "id": "S4_PUMP_C",
+      "facility_id": "S4_FACILITY_C",
+      "status": 1,
+      "flow_bpd": 2886.0,
+      "discharge_psi": 1218.3
+    },
+    {
+      "id": "S4_PUMP_D",
+      "facility_id": "S4_FACILITY_D",
+      "status": 0,
+      "flow_bpd": 0.0,
+      "discharge_psi": 1105.5
+    },
+    {
+      "id": "S5_PUMP_A",
+      "facility_id": "S5_FACILITY_A",
+      "status": 0,
+      "flow_bpd": 0.0,
+      "discharge_psi": 1019.4
+    },
+    {
+      "id": "S5_PUMP_B",
+      "facility_id": "S5_FACILITY_B",
+      "status": 1,
+      "flow_bpd": 2525.7,
+      "discharge_psi": 1171.6
+    },
+    {
+      "id": "S5_PUMP_C",
+      "facility_id": "S5_FACILITY_C",
+      "status": 1,
+      "flow_bpd": 1924.8,
+      "discharge_psi": 1166.6
+    }
+  ],
+  "pipelines": [
+    {
+      "id": "S1_PIPELINE_A",
+      "facility_id": "S1_FACILITY_A",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 1052.0
+    },
+    {
+      "id": "S1_PIPELINE_B",
+      "facility_id": "S1_FACILITY_B",
+      "receive_flow_bpd": 3014.3,
+      "pressure_psi": 1102.1
+    },
+    {
+      "id": "S1_PIPELINE_C",
+      "facility_id": "S1_FACILITY_C",
+      "receive_flow_bpd": 2703.2,
+      "pressure_psi": 1097.1
+    },
+    {
+      "id": "S2_PIPELINE_A",
+      "facility_id": "S2_FACILITY_A",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 998.8
+    },
+    {
+      "id": "S2_PIPELINE_B",
+      "facility_id": "S2_FACILITY_B",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 998.4
+    },
+    {
+      "id": "S2_PIPELINE_C",
+      "facility_id": "S2_FACILITY_C",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 1005.7
+    },
+    {
+      "id": "S3_PIPELINE_A",
+      "facility_id": "S3_FACILITY_A",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 954.4
+    },
+    {
+      "id": "S3_PIPELINE_B",
+      "facility_id": "S3_FACILITY_B",
+      "receive_flow_bpd": 2266.6,
+      "pressure_psi": 996.9
+    },
+    {
+      "id": "S4_PIPELINE_A",
+      "facility_id": "S4_FACILITY_A",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 1097.7
+    },
+    {
+      "id": "S4_PIPELINE_B",
+      "facility_id": "S4_FACILITY_B",
+      "receive_flow_bpd": 2246.1,
+      "pressure_psi": 1153.2
+    },
+    {
+      "id": "S4_PIPELINE_C",
+      "facility_id": "S4_FACILITY_C",
+      "receive_flow_bpd": 2905.3,
+      "pressure_psi": 1152.5
+    },
+    {
+      "id": "S4_PIPELINE_D",
+      "facility_id": "S4_FACILITY_D",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 1097.9
+    },
+    {
+      "id": "S5_PIPELINE_A",
+      "facility_id": "S5_FACILITY_A",
+      "receive_flow_bpd": 0.0,
+      "pressure_psi": 1017.7
+    },
+    {
+      "id": "S5_PIPELINE_B",
+      "facility_id": "S5_FACILITY_B",
+      "receive_flow_bpd": 2493.7,
+      "pressure_psi": 1045.4
+    },
+    {
+      "id": "S5_PIPELINE_C",
+      "facility_id": "S5_FACILITY_C",
+      "receive_flow_bpd": 1941.1,
+      "pressure_psi": 1073.3
+    }
+  ],
+  "wells": [
+    {
+      "id": "S1_WELL_A1",
+      "facility_id": "S1_FACILITY_A",
+      "status": 1,
+      "water_bpd": 999.4
+    },
+    {
+      "id": "S1_WELL_A2",
+      "facility_id": "S1_FACILITY_A",
+      "status": 1,
+      "water_bpd": 800.8
+    },
+    {
+      "id": "S1_WELL_A3",
+      "facility_id": "S1_FACILITY_A",
+      "status": 1,
+      "water_bpd": 595.4
+    },
+    {
+      "id": "S1_WELL_B1",
+      "facility_id": "S1_FACILITY_B",
+      "status": 1,
+      "water_bpd": 1005.8
+    },
+    {
+      "id": "S1_WELL_B2",
+      "facility_id": "S1_FACILITY_B",
+      "status": 1,
+      "water_bpd": 600.3
+    },
+    {
+      "id": "S1_WELL_B3",
+      "facility_id": "S1_FACILITY_B",
+      "status": 1,
+      "water_bpd": 399.9
+    },
+    {
+      "id": "S1_WELL_C1",
+      "facility_id": "S1_FACILITY_C",
+      "status": 1,
+      "water_bpd": 449.7
+    },
+    {
+      "id": "S1_WELL_C2",
+      "facility_id": "S1_FACILITY_C",
+      "status": 1,
+      "water_bpd": 700.6
+    },
+    {
+      "id": "S1_WELL_C3",
+      "facility_id": "S1_FACILITY_C",
+      "status": 1,
+      "water_bpd": 645.7
+    },
+    {
+      "id": "S2_WELL_A1",
+      "facility_id": "S2_FACILITY_A",
+      "status": 1,
+      "water_bpd": 1106.0
+    },
+    {
+      "id": "S2_WELL_A2",
+      "facility_id": "S2_FACILITY_A",
+      "status": 1,
+      "water_bpd": 651.3
+    },
+    {
+      "id": "S2_WELL_A3",
+      "facility_id": "S2_FACILITY_A",
+      "status": 1,
+      "water_bpd": 443.5
+    },
+    {
+      "id": "S2_WELL_B1",
+      "facility_id": "S2_FACILITY_B",
+      "status": 1,
+      "water_bpd": 400.7
+    },
+    {
+      "id": "S2_WELL_B2",
+      "facility_id": "S2_FACILITY_B",
+      "status": 1,
+      "water_bpd": 650.4
+    },
+    {
+      "id": "S2_WELL_B3",
+      "facility_id": "S2_FACILITY_B",
+      "status": 1,
+      "water_bpd": 553.4
+    },
+    {
+      "id": "S2_WELL_C1",
+      "facility_id": "S2_FACILITY_C",
+      "status": 1,
+      "water_bpd": 602.7
+    },
+    {
+      "id": "S2_WELL_C2",
+      "facility_id": "S2_FACILITY_C",
+      "status": 1,
+      "water_bpd": 455.0
+    },
+    {
+      "id": "S2_WELL_C3",
+      "facility_id": "S2_FACILITY_C",
+      "status": 1,
+      "water_bpd": 348.3
+    },
+    {
+      "id": "S3_WELL_A1",
+      "facility_id": "S3_FACILITY_A",
+      "status": 1,
+      "water_bpd": 853.3
+    },
+    {
+      "id": "S3_WELL_A2",
+      "facility_id": "S3_FACILITY_A",
+      "status": 1,
+      "water_bpd": 645.6
+    },
+    {
+      "id": "S3_WELL_A3",
+      "facility_id": "S3_FACILITY_A",
+      "status": 1,
+      "water_bpd": 496.5
+    },
+    {
+      "id": "S3_WELL_B1",
+      "facility_id": "S3_FACILITY_B",
+      "status": 1,
+      "water_bpd": 759.0
+    },
+    {
+      "id": "S3_WELL_B2",
+      "facility_id": "S3_FACILITY_B",
+      "status": 1,
+      "water_bpd": 454.2
+    },
+    {
+      "id": "S3_WELL_B3",
+      "facility_id": "S3_FACILITY_B",
+      "status": 1,
+      "water_bpd": 297.9
+    },
+    {
+      "id": "S4_WELL_A1",
+      "facility_id": "S4_FACILITY_A",
+      "status": 1,
+      "water_bpd": 450.6
+    },
+    {
+      "id": "S4_WELL_A2",
+      "facility_id": "S4_FACILITY_A",
+      "status": 1,
+      "water_bpd": 728.2
+    },
+    {
+      "id": "S4_WELL_A3",
+      "facility_id": "S4_FACILITY_A",
+      "status": 1,
+      "water_bpd": 626.3
+    },
+    {
+      "id": "S4_WELL_B1",
+      "facility_id": "S4_FACILITY_B",
+      "status": 1,
+      "water_bpd": 650.4
+    },
+    {
+      "id": "S4_WELL_B2",
+      "facility_id": "S4_FACILITY_B",
+      "status": 1,
+      "water_bpd": 501.7
+    },
+    {
+      "id": "S4_WELL_B3",
+      "facility_id": "S4_FACILITY_B",
+      "status": 1,
+      "water_bpd": 351.0
+    },
+    {
+      "id": "S4_WELL_C1",
+      "facility_id": "S4_FACILITY_C",
+      "status": 1,
+      "water_bpd": 1051.1
+    },
+    {
+      "id": "S4_WELL_C2",
+      "facility_id": "S4_FACILITY_C",
+      "status": 1,
+      "water_bpd": 631.2
+    },
+    {
+      "id": "S4_WELL_C3",
+      "facility_id": "S4_FACILITY_C",
+      "status": 1,
+      "water_bpd": 413.2
+    },
+    {
+      "id": "S4_WELL_D1",
+      "facility_id": "S4_FACILITY_D",
+      "status": 1,
+      "water_bpd": 445.4
+    },
+    {
+      "id": "S4_WELL_D2",
+      "facility_id": "S4_FACILITY_D",
+      "status": 1,
+      "water_bpd": 653.0
+    },
+    {
+      "id": "S4_WELL_D3",
+      "facility_id": "S4_FACILITY_D",
+      "status": 1,
+      "water_bpd": 599.1
+    },
+    {
+      "id": "S5_WELL_A1",
+      "facility_id": "S5_FACILITY_A",
+      "status": 1,
+      "water_bpd": 805.6
+    },
+    {
+      "id": "S5_WELL_A2",
+      "facility_id": "S5_FACILITY_A",
+      "status": 1,
+      "water_bpd": 619.6
+    },
+    {
+      "id": "S5_WELL_A3",
+      "facility_id": "S5_FACILITY_A",
+      "status": 1,
+      "water_bpd": 473.1
+    },
+    {
+      "id": "S5_WELL_B1",
+      "facility_id": "S5_FACILITY_B",
+      "status": 1,
+      "water_bpd": 844.4
+    },
+    {
+      "id": "S5_WELL_B2",
+      "facility_id": "S5_FACILITY_B",
+      "status": 1,
+      "water_bpd": 512.4
+    },
+    {
+      "id": "S5_WELL_B3",
+      "facility_id": "S5_FACILITY_B",
+      "status": 1,
+      "water_bpd": 335.0
+    },
+    {
+      "id": "S5_WELL_C1",
+      "facility_id": "S5_FACILITY_C",
+      "status": 1,
+      "water_bpd": 331.2
+    },
+    {
+      "id": "S5_WELL_C2",
+      "facility_id": "S5_FACILITY_C",
+      "status": 1,
+      "water_bpd": 518.8
+    },
+    {
+      "id": "S5_WELL_C3",
+      "facility_id": "S5_FACILITY_C",
+      "status": 1,
+      "water_bpd": 454.8
+    }
+  ]
+}

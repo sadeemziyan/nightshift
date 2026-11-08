@@ -1,0 +1,208 @@
+{
+  "t": 1791453900,
+  "alerts": [
+    {
+      "event_id": "S2_PUMP_B@1791450000",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_B",
+      "asset_id": "S2_PUMP_B",
+      "category": "pump_failure",
+      "status": "ongoing",
+      "onset_ts": "2026-10-08T09:00:00Z",
+      "onset_unix": 1791450000,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791450000,
+      "confidence": 0.97,
+      "score": null,
+      "evidence": [
+        "Pump S2_PUMP_B reports fault (status 2) and delivers 0 bpd while tank S2_TANK_B is at 60.4%",
+        "Tank S2_TANK_B has risen from 50.0% to 60.4% since the pump stopped"
+      ],
+      "source": "rules",
+      "level_pct": 60.35,
+      "hours_to_limit": {
+        "p50": 3.32,
+        "p10": null,
+        "p90": null
+      },
+      "urgency": "high",
+      "recommended_actions": [
+        {
+          "type": "dispatch_truck",
+          "facility_id": "S2_FACILITY_B",
+          "trucks": 1,
+          "trips_per_truck": 1
+        }
+      ],
+      "order": 1
+    },
+    {
+      "event_id": "S2_PUMP_C@1791451800",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_C",
+      "asset_id": "S2_PUMP_C",
+      "category": "pump_failure",
+      "status": "ongoing",
+      "onset_ts": "2026-10-08T09:30:00Z",
+      "onset_unix": 1791451800,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791451800,
+      "confidence": 0.97,
+      "score": null,
+      "evidence": [
+        "Pump S2_PUMP_C reports fault (status 2) and delivers 0 bpd while tank S2_TANK_C is at 50.6%",
+        "Tank S2_TANK_C has risen from 45.1% to 50.6% since the pump stopped"
+      ],
+      "source": "rules",
+      "level_pct": 50.62,
+      "hours_to_limit": {
+        "p50": 4.25,
+        "p10": null,
+        "p90": null
+      },
+      "urgency": "medium",
+      "recommended_actions": [
+        {
+          "type": "shut_in_wells",
+          "wells": [
+            "S2_WELL_C1"
+          ],
+          "start_after_min": 161
+        }
+      ],
+      "order": 2
+    },
+    {
+      "event_id": "S2_PUMP_A@1791453600",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_A",
+      "asset_id": "S2_PUMP_A",
+      "category": "pump_failure",
+      "status": "ongoing",
+      "onset_ts": "2026-10-08T10:00:00Z",
+      "onset_unix": 1791453600,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791453600,
+      "confidence": 0.97,
+      "score": null,
+      "evidence": [
+        "Pump S2_PUMP_A reports fault (status 2) and delivers 0 bpd while tank S2_TANK_A is at 50.8%",
+        "Tank S2_TANK_A has risen from 49.9% to 50.8% since the pump stopped"
+      ],
+      "source": "rules",
+      "level_pct": 50.84,
+      "hours_to_limit": {
+        "p50": 4.5,
+        "p10": null,
+        "p90": null
+      },
+      "urgency": "medium",
+      "recommended_actions": [
+        {
+          "type": "dispatch_truck",
+          "facility_id": "S2_FACILITY_A",
+          "trucks": 1,
+          "trips_per_truck": 1
+        }
+      ],
+      "order": 3
+    },
+    {
+      "event_id": "S3_PUMP_A@1791368400",
+      "system_id": "S3",
+      "facility_id": "S3_FACILITY_A",
+      "asset_id": "S3_PUMP_A",
+      "category": "pump_degradation",
+      "status": "ongoing",
+      "onset_ts": "2026-10-07T10:20:00Z",
+      "onset_unix": 1791368400,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791377700,
+      "confidence": 0.99,
+      "score": null,
+      "evidence": [
+        "Pump S3_PUMP_A moves 2733 bpd, 8.9% below its learned normal (2999 bpd), and the shortfall has grown over 20.4 h of running time",
+        "Discharge pressure is also falling (36 psi below normal)"
+      ],
+      "source": "rules",
+      "level_pct": 59.87,
+      "hours_to_limit": null,
+      "urgency": "medium",
+      "recommended_actions": [
+        {
+          "type": "field_inspection",
+          "asset_id": "S3_PUMP_A",
+          "urgency": "medium"
+        }
+      ],
+      "order": 4
+    },
+    {
+      "event_id": "S4_PUMP_C@1791392400",
+      "system_id": "S4",
+      "facility_id": "S4_FACILITY_C",
+      "asset_id": "S4_PUMP_C",
+      "category": "pump_degradation",
+      "status": "ongoing",
+      "onset_ts": "2026-10-07T17:00:00Z",
+      "onset_unix": 1791392400,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791401400,
+      "confidence": 0.96,
+      "score": null,
+      "evidence": [
+        "Pump S4_PUMP_C moves 2913 bpd, 7.5% below its learned normal (3148 bpd), and the shortfall has grown over 17.1 h of running time",
+        "Discharge pressure is also falling (29 psi below normal)"
+      ],
+      "source": "rules",
+      "level_pct": 53.16,
+      "hours_to_limit": null,
+      "urgency": "medium",
+      "recommended_actions": [
+        {
+          "type": "field_inspection",
+          "asset_id": "S4_PUMP_C",
+          "urgency": "medium"
+        }
+      ],
+      "order": 5
+    },
+    {
+      "event_id": "S5_PIPELINE_B@1791441300",
+      "system_id": "S5",
+      "facility_id": "S5_FACILITY_B",
+      "asset_id": "S5_PIPELINE_B",
+      "category": "pipeline_leak",
+      "status": "ongoing",
+      "onset_ts": "2026-10-08T06:35:00Z",
+      "onset_unix": 1791441300,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791441600,
+      "confidence": 0.89,
+      "score": null,
+      "evidence": [
+        "Pipeline S5_PIPELINE_B pressure is 26 psi below its learned normal (1071 psi) for 3.5 h of pump running time",
+        "Only 97.6% of the water pump S5_PUMP_B sends is arriving at the disposal site",
+        "Pressure drop and flow loss agree, which points to a leak between pump and disposal site"
+      ],
+      "source": "rules",
+      "level_pct": 52.17,
+      "hours_to_limit": null,
+      "urgency": "critical",
+      "recommended_actions": [
+        {
+          "type": "field_inspection",
+          "asset_id": "S5_PIPELINE_B",
+          "urgency": "critical"
+        }
+      ],
+      "order": 6
+    }
+  ]
+}

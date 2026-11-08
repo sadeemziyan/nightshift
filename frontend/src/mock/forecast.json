@@ -1,0 +1,86 @@
+{
+  "t": 1791453900,
+  "forecasts": [
+    {
+      "event_id": "S2_PUMP_B@1791450000",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_B",
+      "asset_id": "S2_PUMP_B",
+      "level_pct": 60.35,
+      "level_bbl": 422.5,
+      "capacity_bbl": 700.0,
+      "shutdown_pct": 92,
+      "inflow_bpd": 1600.1,
+      "well_water_bpd": {
+        "S2_WELL_B1": 402.2,
+        "S2_WELL_B2": 647.5,
+        "S2_WELL_B3": 550.4
+      },
+      "hours_to_limit": {
+        "p50": 3.32,
+        "p10": null,
+        "p90": null
+      },
+      "already_shut_in": false,
+      "trips_at_unix": 1791465863,
+      "trips_at_ts": "2026-10-08T13:24:23Z",
+      "repair_ends_unix": 1791471600,
+      "repair_hours_remaining": 4.92,
+      "elapsed_min": 65.0
+    },
+    {
+      "event_id": "S2_PUMP_C@1791451800",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_C",
+      "asset_id": "S2_PUMP_C",
+      "level_pct": 50.62,
+      "level_bbl": 303.7,
+      "capacity_bbl": 600.0,
+      "shutdown_pct": 92,
+      "inflow_bpd": 1402.2,
+      "well_water_bpd": {
+        "S2_WELL_C1": 601.6,
+        "S2_WELL_C2": 450.5,
+        "S2_WELL_C3": 350.1
+      },
+      "hours_to_limit": {
+        "p50": 4.25,
+        "p10": null,
+        "p90": null
+      },
+      "already_shut_in": false,
+      "trips_at_unix": 1791469199,
+      "trips_at_ts": "2026-10-08T14:19:59Z",
+      "repair_ends_unix": 1791473400,
+      "repair_hours_remaining": 5.42,
+      "elapsed_min": 35.0
+    },
+    {
+      "event_id": "S2_PUMP_A@1791453600",
+      "system_id": "S2",
+      "facility_id": "S2_FACILITY_A",
+      "asset_id": "S2_PUMP_A",
+      "level_pct": 50.84,
+      "level_bbl": 508.4,
+      "capacity_bbl": 1000.0,
+      "shutdown_pct": 92,
+      "inflow_bpd": 2196.1,
+      "well_water_bpd": {
+        "S2_WELL_A1": 1098.6,
+        "S2_WELL_A2": 650.6,
+        "S2_WELL_A3": 446.8
+      },
+      "hours_to_limit": {
+        "p50": 4.5,
+        "p10": null,
+        "p90": null
+      },
+      "already_shut_in": false,
+      "trips_at_unix": 1791470093,
+      "trips_at_ts": "2026-10-08T14:34:53Z",
+      "repair_ends_unix": 1791475200,
+      "repair_hours_remaining": 5.92,
+      "elapsed_min": 5.0
+    }
+  ]
+}

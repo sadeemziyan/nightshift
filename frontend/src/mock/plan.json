@@ -1,0 +1,714 @@
+{
+  "t": 1791453900,
+  "systems": [
+    {
+      "system_id": "S2",
+      "fleet_size": 2,
+      "event_ids": [
+        "S2_PUMP_B@1791450000",
+        "S2_PUMP_C@1791451800",
+        "S2_PUMP_A@1791453600"
+      ],
+      "do_nothing_cost_usd": 12273.88,
+      "planned_separately": {
+        "cost_usd": 5194.38,
+        "summary": "S2_FACILITY_B: 1 truck, 1 trip; S2_FACILITY_C: 1 truck, 1 trip; S2_FACILITY_A: Shut in S2_WELL_A1 at +184 min",
+        "trucks_used": 2,
+        "trucks_wanted_if_independent": 3,
+        "extra_cost_vs_system_plan_usd": 2086.05
+      },
+      "plans": [
+        {
+          "rank": 1,
+          "summary": "S2_FACILITY_B: 1 truck, 1 trip; S2_FACILITY_C: Shut in S2_WELL_C1 at +161 min; S2_FACILITY_A: 1 truck, 1 trip",
+          "cost_usd": 3108.33,
+          "cost_breakdown": {
+            "trucks": 1810.0,
+            "shut_in": 1298.33,
+            "automatic_shutdown": 0.0
+          },
+          "cost_math": "S2_FACILITY_B: 1 trip \u00d7 $905 | S2_FACILITY_C: S2_WELL_C1 off 164 min \u00d7 $475/h | S2_FACILITY_A: 1 trip \u00d7 $905",
+          "actions": [
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_B",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_A",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "shut_in_wells",
+              "wells": [
+                "S2_WELL_C1"
+              ],
+              "start_after_min": 161
+            }
+          ],
+          "trucks_used": 2,
+          "keeps_tank_under_shutdown": true,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791458100,
+                  "arrives_ts": "11:15Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 85.74975198412699,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_B",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "Shut in S2_WELL_C1 at +161 min",
+              "cost_usd": 1298.33,
+              "cost_math": "S2_WELL_C1 off 164 min \u00d7 $475/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [
+                {
+                  "well": "S2_WELL_C1",
+                  "start_min": 161,
+                  "minutes": 164.0,
+                  "rate_per_hour": 475.0,
+                  "cost": 1298.3333333333333
+                }
+              ],
+              "peak_level_pct": 91.9455324074074,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "shut_in_wells",
+                  "wells": [
+                    "S2_WELL_C1"
+                  ],
+                  "start_after_min": 161
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791459000,
+                  "arrives_ts": "11:30Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 89.97749999999999,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_A",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 2,
+          "summary": "S2_FACILITY_B: Shut in S2_WELL_B2 at +58 min; S2_FACILITY_C: 1 truck, 1 trip; S2_FACILITY_A: 1 truck, 1 trip",
+          "cost_usd": 3217.19,
+          "cost_breakdown": {
+            "trucks": 1810.0,
+            "shut_in": 1407.19,
+            "automatic_shutdown": 0.0
+          },
+          "cost_math": "S2_FACILITY_B: S2_WELL_B2 off 237 min \u00d7 $356.25/h | S2_FACILITY_C: 1 trip \u00d7 $905 | S2_FACILITY_A: 1 trip \u00d7 $905",
+          "actions": [
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_C",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_A",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "shut_in_wells",
+              "wells": [
+                "S2_WELL_B2"
+              ],
+              "start_after_min": 58
+            }
+          ],
+          "trucks_used": 2,
+          "keeps_tank_under_shutdown": true,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "Shut in S2_WELL_B2 at +58 min",
+              "cost_usd": 1407.19,
+              "cost_math": "S2_WELL_B2 off 237 min \u00d7 $356.25/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [
+                {
+                  "well": "S2_WELL_B2",
+                  "start_min": 58,
+                  "minutes": 237.0,
+                  "rate_per_hour": 356.25,
+                  "cost": 1407.1875
+                }
+              ],
+              "peak_level_pct": 91.95436507936508,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "shut_in_wells",
+                  "wells": [
+                    "S2_WELL_B2"
+                  ],
+                  "start_after_min": 58
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791458700,
+                  "arrives_ts": "11:25Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 78.36479166666666,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_C",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791459000,
+                  "arrives_ts": "11:30Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 89.97749999999999,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_A",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 3,
+          "summary": "S2_FACILITY_B: Shut in S2_WELL_B2 at +58 min; S2_FACILITY_C: Shut in S2_WELL_C1 at +161 min; S2_FACILITY_A: 1 truck, 1 trip",
+          "cost_usd": 3610.52,
+          "cost_breakdown": {
+            "trucks": 905.0,
+            "shut_in": 2705.52,
+            "automatic_shutdown": 0.0
+          },
+          "cost_math": "S2_FACILITY_B: S2_WELL_B2 off 237 min \u00d7 $356.25/h | S2_FACILITY_C: S2_WELL_C1 off 164 min \u00d7 $475/h | S2_FACILITY_A: 1 trip \u00d7 $905",
+          "actions": [
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_A",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "shut_in_wells",
+              "wells": [
+                "S2_WELL_B2"
+              ],
+              "start_after_min": 58
+            },
+            {
+              "type": "shut_in_wells",
+              "wells": [
+                "S2_WELL_C1"
+              ],
+              "start_after_min": 161
+            }
+          ],
+          "trucks_used": 1,
+          "keeps_tank_under_shutdown": true,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "Shut in S2_WELL_B2 at +58 min",
+              "cost_usd": 1407.19,
+              "cost_math": "S2_WELL_B2 off 237 min \u00d7 $356.25/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [
+                {
+                  "well": "S2_WELL_B2",
+                  "start_min": 58,
+                  "minutes": 237.0,
+                  "rate_per_hour": 356.25,
+                  "cost": 1407.1875
+                }
+              ],
+              "peak_level_pct": 91.95436507936508,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "shut_in_wells",
+                  "wells": [
+                    "S2_WELL_B2"
+                  ],
+                  "start_after_min": 58
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "Shut in S2_WELL_C1 at +161 min",
+              "cost_usd": 1298.33,
+              "cost_math": "S2_WELL_C1 off 164 min \u00d7 $475/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [
+                {
+                  "well": "S2_WELL_C1",
+                  "start_min": 161,
+                  "minutes": 164.0,
+                  "rate_per_hour": 475.0,
+                  "cost": 1298.3333333333333
+                }
+              ],
+              "peak_level_pct": 91.9455324074074,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "shut_in_wells",
+                  "wells": [
+                    "S2_WELL_C1"
+                  ],
+                  "start_after_min": 161
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791459000,
+                  "arrives_ts": "11:30Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 89.97749999999999,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_A",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 4,
+          "summary": "S2_FACILITY_B: 1 truck, 1 trip; S2_FACILITY_C: Do nothing; S2_FACILITY_A: 1 truck, 1 trip",
+          "cost_usd": 4603.78,
+          "cost_breakdown": {
+            "trucks": 1810.0,
+            "shut_in": 0.0,
+            "automatic_shutdown": 2793.78
+          },
+          "cost_math": "S2_FACILITY_B: 1 trip \u00d7 $905 | S2_FACILITY_C: all wells off 70.0 min \u00d7 $2,393.75/h | S2_FACILITY_A: 1 trip \u00d7 $905",
+          "actions": [
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_B",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_A",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "none",
+              "facility_id": "S2_FACILITY_C"
+            }
+          ],
+          "trucks_used": 2,
+          "keeps_tank_under_shutdown": false,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791458100,
+                  "arrives_ts": "11:15Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 85.74975198412699,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_B",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "Do nothing",
+              "cost_usd": 2793.78,
+              "cost_math": "all wells off 70.0 min \u00d7 $2,393.75/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [],
+              "peak_level_pct": null,
+              "tank_trips_in_min": 254.9730423620025,
+              "keeps_tank_under_shutdown": false,
+              "actions": [
+                {
+                  "type": "none",
+                  "facility_id": "S2_FACILITY_C"
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791459000,
+                  "arrives_ts": "11:30Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 89.97749999999999,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_A",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 5,
+          "summary": "S2_FACILITY_B: Shut in S2_WELL_B2 at +58 min; S2_FACILITY_C: Do nothing; S2_FACILITY_A: 1 truck, 1 trip",
+          "cost_usd": 5105.97,
+          "cost_breakdown": {
+            "trucks": 905.0,
+            "shut_in": 1407.19,
+            "automatic_shutdown": 2793.78
+          },
+          "cost_math": "S2_FACILITY_B: S2_WELL_B2 off 237 min \u00d7 $356.25/h | S2_FACILITY_C: all wells off 70.0 min \u00d7 $2,393.75/h | S2_FACILITY_A: 1 trip \u00d7 $905",
+          "actions": [
+            {
+              "type": "dispatch_truck",
+              "facility_id": "S2_FACILITY_A",
+              "trucks": 1,
+              "trips_per_truck": 1
+            },
+            {
+              "type": "shut_in_wells",
+              "wells": [
+                "S2_WELL_B2"
+              ],
+              "start_after_min": 58
+            },
+            {
+              "type": "none",
+              "facility_id": "S2_FACILITY_C"
+            }
+          ],
+          "trucks_used": 1,
+          "keeps_tank_under_shutdown": false,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "Shut in S2_WELL_B2 at +58 min",
+              "cost_usd": 1407.19,
+              "cost_math": "S2_WELL_B2 off 237 min \u00d7 $356.25/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [
+                {
+                  "well": "S2_WELL_B2",
+                  "start_min": 58,
+                  "minutes": 237.0,
+                  "rate_per_hour": 356.25,
+                  "cost": 1407.1875
+                }
+              ],
+              "peak_level_pct": 91.95436507936508,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "shut_in_wells",
+                  "wells": [
+                    "S2_WELL_B2"
+                  ],
+                  "start_after_min": 58
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "Do nothing",
+              "cost_usd": 2793.78,
+              "cost_math": "all wells off 70.0 min \u00d7 $2,393.75/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [],
+              "peak_level_pct": null,
+              "tank_trips_in_min": 254.9730423620025,
+              "keeps_tank_under_shutdown": false,
+              "actions": [
+                {
+                  "type": "none",
+                  "facility_id": "S2_FACILITY_C"
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "1 truck, 1 trip",
+              "cost_usd": 905.0,
+              "cost_math": "1 trip \u00d7 $905",
+              "trucks": 1,
+              "trips_per_truck": 1,
+              "trip_arrivals": [
+                {
+                  "arrives_unix": 1791459000,
+                  "arrives_ts": "11:30Z",
+                  "removes_bbl": 150.0
+                }
+              ],
+              "shut_in": [],
+              "peak_level_pct": 89.97749999999999,
+              "tank_trips_in_min": null,
+              "keeps_tank_under_shutdown": true,
+              "actions": [
+                {
+                  "type": "dispatch_truck",
+                  "facility_id": "S2_FACILITY_A",
+                  "trucks": 1,
+                  "trips_per_truck": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "rank": 6,
+          "summary": "S2_FACILITY_B: Do nothing; S2_FACILITY_C: Do nothing; S2_FACILITY_A: Do nothing",
+          "cost_usd": 12273.88,
+          "cost_breakdown": {
+            "trucks": 0.0,
+            "shut_in": 0.0,
+            "automatic_shutdown": 12273.88
+          },
+          "cost_math": "S2_FACILITY_B: all wells off 95.6 min \u00d7 $2,450/h | S2_FACILITY_C: all wells off 70.0 min \u00d7 $2,393.75/h | S2_FACILITY_A: all wells off 85.1 min \u00d7 $3,931.25/h",
+          "actions": [
+            {
+              "type": "none",
+              "facility_id": "S2_FACILITY_B"
+            },
+            {
+              "type": "none",
+              "facility_id": "S2_FACILITY_C"
+            },
+            {
+              "type": "none",
+              "facility_id": "S2_FACILITY_A"
+            }
+          ],
+          "trucks_used": 0,
+          "keeps_tank_under_shutdown": false,
+          "shutdown_risk": null,
+          "per_facility": [
+            {
+              "facility_id": "S2_FACILITY_B",
+              "event_id": "S2_PUMP_B@1791450000",
+              "summary": "Do nothing",
+              "cost_usd": 3904.38,
+              "cost_math": "all wells off 95.6 min \u00d7 $2,450/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [],
+              "peak_level_pct": null,
+              "tank_trips_in_min": 199.38253859133803,
+              "keeps_tank_under_shutdown": false,
+              "actions": [
+                {
+                  "type": "none",
+                  "facility_id": "S2_FACILITY_B"
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_C",
+              "event_id": "S2_PUMP_C@1791451800",
+              "summary": "Do nothing",
+              "cost_usd": 2793.78,
+              "cost_math": "all wells off 70.0 min \u00d7 $2,393.75/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [],
+              "peak_level_pct": null,
+              "tank_trips_in_min": 254.9730423620025,
+              "keeps_tank_under_shutdown": false,
+              "actions": [
+                {
+                  "type": "none",
+                  "facility_id": "S2_FACILITY_C"
+                }
+              ]
+            },
+            {
+              "facility_id": "S2_FACILITY_A",
+              "event_id": "S2_PUMP_A@1791453600",
+              "summary": "Do nothing",
+              "cost_usd": 5575.72,
+              "cost_math": "all wells off 85.1 min \u00d7 $3,931.25/h",
+              "trucks": 0,
+              "trips_per_truck": 0,
+              "trip_arrivals": [],
+              "shut_in": [],
+              "peak_level_pct": null,
+              "tank_trips_in_min": 269.9016393442623,
+              "keeps_tank_under_shutdown": false,
+              "actions": [
+                {
+                  "type": "none",
+                  "facility_id": "S2_FACILITY_A"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

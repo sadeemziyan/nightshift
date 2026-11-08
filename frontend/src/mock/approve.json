@@ -1,0 +1,23 @@
+{
+  "approved": true,
+  "plan_rank": 1,
+  "summary": "S2_FACILITY_B: 1 truck, 1 trip; S2_FACILITY_C: Shut in S2_WELL_C1 at +161 min; S2_FACILITY_A: 1 truck, 1 trip",
+  "cost_usd": 3108.33,
+  "dispatches": [
+    {
+      "to": "truck_driver",
+      "message": "Truck 1 -> S2_FACILITY_B, 150 bbl x 1 trip(s), arrive 11:15Z",
+      "status": "simulated"
+    },
+    {
+      "to": "field_operator",
+      "message": "Shut in S2_WELL_C1 at +161 min and keep it off until the repair is done",
+      "status": "simulated"
+    },
+    {
+      "to": "truck_driver",
+      "message": "Truck 1 -> S2_FACILITY_A, 150 bbl x 1 trip(s), arrive 11:30Z",
+      "status": "simulated"
+    }
+  ]
+}
