@@ -230,6 +230,17 @@ def _lost_revenue_per_hour(ds: Dataset, facility_id: str) -> float:
     return per_day / 24.0
 
 
+def _urgency(category: str, hours_p50) -> str:
+    """How fast someone must act: leaks are always urgent; a failing pump by time left to shutdown."""
+    if category == "pipeline_leak":
+        return "critical"
+    if category == "pump_degradation":
+        return "medium"
+    if hours_p50 is None:
+        return "medium"
+    return "critical" if hours_p50 <= 2 else "high" if hours_p50 <= 4 else "medium"
+
+
 @app.get("/alerts")
 def alerts(t: int | None = None, include_resolved: bool = False):
     ds = current()
@@ -252,12 +263,15 @@ def alerts(t: int | None = None, include_resolved: bool = False):
             actions = actions_by_event.get(ev["event_id"], []) if ongoing else []
             hours = fc["hours_to_limit"] if fc else {"p50": None, "p10": None, "p90": None}
         else:
-            actions = [{"type": "field_inspection", "asset_id": ev["asset_id"]}] if ongoing else []
+            urgency_for_action = _urgency(ev["category"], None)
+            actions = ([{"type": "field_inspection", "asset_id": ev["asset_id"], "urgency": urgency_for_action}]
+                       if ongoing else [])
             hours = None
         row = {
             **ev,
             "level_pct": _num(ds.latest(fac["tank"]["id"], "level_pct", t)),
             "hours_to_limit": hours,
+            "urgency": _urgency(ev["category"], (hours or {}).get("p50")) if ongoing else None,
             "recommended_actions": actions,
         }
         rows.append(row)
