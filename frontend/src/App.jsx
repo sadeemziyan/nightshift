@@ -17,6 +17,8 @@ function App() {
   const [decision, setDecision] = useState(NO_PLANS) // /forecast rows and /plan, both at time t
   const [planLoading, setPlanLoading] = useState(false)
   const [t, setT] = useState(null)
+  const [playing, setPlaying] = useState(false)
+  const [speed, setSpeed] = useState(60)
   const [range, setRange] = useState({ min: 0, max: 0 })
   const [usingMock, setUsingMock] = useState(false)
   const [notice, setNotice] = useState('Connecting to the backend...')
@@ -145,6 +147,18 @@ function App() {
     setSelectedFacilityId(alert.facility_id)
   }
 
+  useEffect(() => {
+    if (!playing || usingMock || t == null || t >= range.max) {
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setT((current) => Math.min(current + speed, range.max))
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [playing, speed, usingMock, t, range.max])
+
   return (
     <main className="min-h-screen bg-slate-950 p-8 text-slate-100">
       <p className="text-sm font-semibold uppercase tracking-widest text-cyan-400">Operations console</p>
@@ -172,7 +186,10 @@ function App() {
             id="dataset"
             value={datasetId}
             disabled={usingMock}
-            onChange={(e) => openDataset(e.target.value)}
+            onChange={(e) => {
+              setPlaying(false)
+              setT(Number(e.target.value))
+            }}
             className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
           >
             {datasets.map((d) => (
@@ -226,6 +243,35 @@ function App() {
           </div>
         )}
       </div>
+      
+      <div className="mt-4 flex items-center gap-3">
+    <button
+      type="button"
+      disabled={usingMock || t == null || range.max <= range.min}
+      onClick={() => {
+        if (t >= range.max) {
+          setT(range.min)
+          setPlaying(true)
+        } else {
+          setPlaying((current) => !current)
+        }
+      }}
+      className="rounded-lg bg-cyan-400 px-4 py-2 font-semibold text-slate-950 disabled:opacity-40"
+    >
+      {playing && t < range.max ? 'Pause' : 'Play'}
+    </button>
+
+    <select
+      aria-label="Replay speed"
+      value={speed}
+      onChange={(event) => setSpeed(Number(event.target.value))}
+      className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2"
+    >
+      <option value={1}>1×</option>
+      <option value={10}>10×</option>
+      <option value={60}>60×</option>
+    </select>
+  </div>
 
       <ul className="mt-6 flex flex-wrap gap-4 text-sm text-slate-300">
         {['ok', 'warn', 'bad', 'off'].map((k) => (

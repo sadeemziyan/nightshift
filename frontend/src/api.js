@@ -1,5 +1,5 @@
 // Calls to the Nightshift backend (docs/api.md). Base URL: VITE_API_URL, else http://localhost:8000.
-export const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+export const API_BASE = import.meta.env.VITE_API_URL ?? '/api'
 
 async function request(path, options) {
   const res = await fetch(API_BASE + path, options)
