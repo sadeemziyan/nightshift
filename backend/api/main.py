@@ -7,8 +7,10 @@ network.json, ops.json and telemetry.csv up to the time `t` (unix seconds).
 """
 from __future__ import annotations
 
+import dataclasses
 import json
 import logging
+import math
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -18,7 +20,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from backend.api.notify import send_text
@@ -26,7 +28,7 @@ from backend.engine.detect import detect
 from backend.engine.forecast import forecast
 from backend.engine.loader import Dataset, iso, load
 from backend.ml.detect import baseline as m1
-from backend.ml.detect import enrich
+from backend.ml.detect import blend, enrich, simulate
 from backend.ml.forecast import forecast as m4
 from backend.optimizer.system import plan_all
 
@@ -70,6 +72,8 @@ _cache: dict[str, Dataset] = {}
 _current: dict[str, str | None] = {"name": None}
 _results: dict[tuple, object] = {}     # small memo so the UI can poll without recomputing
 _model_info: dict[str, dict] = {}      # per dataset: how the model fit at /load went
+_sim: dict[str, list[dict]] = {}       # simulated dataset name -> the problems injected into it
+_sim_count = {"n": 0}
 
 
 def dataset_folders() -> list[str]:
@@ -232,7 +236,9 @@ def state(t: int | None = None):
 def _events(ds: Dataset, t: int) -> list[dict]:
     def run():
         try:
-            return enrich.detect_with_models(ds, t)    # adds score, a reason and source "model+rules"
+            # rules, then M1/M2 (score, reason, source "model+rules"), then M3's second opinion ("m3" field).
+            # Each layer returns its input unchanged if its model is missing or raises.
+            return blend.detect_with_m3(ds, t)
         except Exception:
             log.exception("model detection failed; using rules only")
             return detect(ds, t)
@@ -250,6 +256,11 @@ def _forecast_rows(ds: Dataset, t: int) -> list[dict]:
     return _memo("forecast", ds, (t,), run)
 
 
+def _flag_simulated(ds: Dataset, body: dict) -> dict:
+    """Anything computed from a dataset with an injected problem says so."""
+    return {**body, "simulated": True} if simulate.is_simulated(ds) else body
+
+
 def _plans(ds: Dataset, t: int, risk: float | None = None) -> dict:
     return _memo("plan", ds, (t, risk),
                  lambda: plan_all(ds.network, ds.ops, _forecast_rows(ds, t), t, risk=risk))
@@ -259,7 +270,7 @@ def _plans(ds: Dataset, t: int, risk: float | None = None) -> dict:
 def forecast_endpoint(t: int | None = None):
     ds = current()
     t = _t(ds, t)
-    return {"t": t, "forecasts": _forecast_rows(ds, t)}
+    return _flag_simulated(ds, {"t": t, "forecasts": _forecast_rows(ds, t)})
 
 
 @app.get("/plan")
@@ -268,7 +279,7 @@ def plan_endpoint(t: int | None = None, risk: float | None = Query(None, ge=0, l
     whose chance of avoiding shutdown is at least that, found against M4's inflow range (M5). Every plan
     carries its shutdown_risk when M4 is available."""
     ds = current()
-    return _plans(ds, _t(ds, t), risk)
+    return _flag_simulated(ds, _plans(ds, _t(ds, t), risk))
 
 
 # ---- alerts -----------------------------------------------------------------
@@ -316,8 +327,11 @@ def alerts(t: int | None = None, include_resolved: bool = False):
             actions = ([{"type": "field_inspection", "asset_id": ev["asset_id"], "urgency": urgency_for_action}]
                        if ongoing else [])
             hours = None
+        injected = any(i["asset_id"] == ev["asset_id"] and i["category"] == ev["category"]
+                       and ev["onset_unix"] >= i["onset_unix"] - 6 * 3600 for i in _sim.get(ds.folder.name, []))
         row = {
             **ev,
+            **({"simulated": True} if injected else {}),
             "reasons": list(ev.get("evidence") or []),
             "level_pct": _num(ds.latest(fac["tank"]["id"], "level_pct", t)),
             "hours_to_limit": hours,
@@ -336,7 +350,7 @@ def alerts(t: int | None = None, include_resolved: bool = False):
     rows.sort(key=sort_key)
     for i, r in enumerate(rows, 1):
         r["order"] = i
-    return {"t": t, "alerts": rows}
+    return _flag_simulated(ds, {"t": t, "alerts": rows})
 
 
 # ---- time series ------------------------------------------------------------
@@ -406,7 +420,8 @@ def model_status():
     return {"dataset": ds.folder.name, "status": info["status"],
             "models": {"M1": {"ready": ready, "fit_seconds": secs},      # learned normal per pump
                        "M2": {"ready": ready, "fit_seconds": secs},      # drift detector (runs on M1)
-                       "M3": {"ready": False, "fit_seconds": None},      # classifier: not built yet
+                       "M3": {"ready": blend._bundle() is not None,      # classifier: trained offline, loaded from models/
+                              "fit_seconds": None},
                        "M4": {"ready": info.get("m4_ready", 0) > 0,      # forecaster: range around the countdown
                               "fit_seconds": info["seconds"] if info.get("m4_ready", 0) > 0 else None}},
             "pumps_calibrated": info["pumps_calibrated"], "pumps_total": info["pumps_total"],
@@ -444,6 +459,58 @@ def model_baseline(id: str, metric: str = "flow_bpd", t: int | None = None, hour
         raise HTTPException(503, f"learned baseline unavailable ({type(exc).__name__}); rules-only mode")
 
 
+class InjectBody(BaseModel):
+    asset_id: str
+    category: str                                  # pump_failure, pump_degradation or pipeline_leak
+    onset_unix: int
+    severity: float = Field(1.0, ge=0, le=1)       # 1 = full failure, smaller = a milder leak or wear
+
+
+def _geo_mid(lo_hi: tuple) -> float:
+    return math.sqrt(lo_hi[0] * lo_hi[1])
+
+
 @app.post("/simulate/inject")
-def simulate_inject():
-    raise HTTPException(501, "fault injection is not built yet")
+def simulate_inject(body: InjectBody):
+    """Add a SIMULATED problem to the loaded data. In memory only: the files are never changed, every result
+    carries simulated: true, and POST /load?dataset=<id> goes back to the real data."""
+    ds = current()
+    if body.category not in simulate.KINDS:
+        raise HTTPException(400, f"category must be one of: {', '.join(simulate.KINDS)}")
+    fid = ds.facility_of(body.asset_id)
+    if fid is None:
+        raise HTTPException(404, f"unknown asset {body.asset_id!r}")
+    needs = "pipeline" if body.category == "pipeline_leak" else "pump"
+    if ds.facility(fid)[needs]["id"] != body.asset_id:
+        raise HTTPException(400, f"{body.category} must target a {needs}, but {body.asset_id!r} is not one")
+    first = int(ds.series(ds.facility(fid)["pump"]["id"], "status").index[0])
+    if not first <= body.onset_unix <= ds.now_unix:
+        raise HTTPException(400, f"onset_unix must be between {first} and {ds.now_unix}")
+
+    cfg = simulate.CFG
+    # severity 0..1 spans the simulator's own size range; speed and pressure sensitivity use its middle values
+    if body.category == "pipeline_leak":
+        lo, hi = cfg.leak_loss
+        size, ramp, kappa = lo + body.severity * (hi - lo), _geo_mid(cfg.leak_ramp_h), _geo_mid(cfg.leak_kappa)
+    elif body.category == "pump_degradation":
+        lo, hi = cfg.wear_loss
+        size, ramp, kappa = lo + body.severity * (hi - lo), _geo_mid(cfg.wear_ramp_h), _geo_mid(cfg.wear_kappa)
+    else:
+        size, ramp, kappa = 1.0, 1.0, 0.0                       # a pump failure is all or nothing
+    sim = simulate.inject(ds, fid, body.category, body.onset_unix, severity=size, ramp_h=ramp, kappa=kappa)
+
+    with _lock:
+        _sim_count["n"] += 1
+        old = _current["name"]
+        base = old.split("+sim")[0]
+        name = f"{base}+sim{_sim_count['n']}"
+        sim = dataclasses.replace(sim, folder=ds.folder.with_name(name))
+        sim.simulated = True
+        _cache[name] = sim
+        _sim[name] = _sim.get(old, []) + [{"asset_id": body.asset_id, "category": body.category,
+                                           "onset_unix": body.onset_unix}]
+        if old in _model_info:
+            _model_info[name] = _model_info[old]
+        _current["name"] = name
+    return {"simulated": True, "event_id": f"SIM:{body.asset_id}@{body.onset_unix}", "category": body.category,
+            "dataset": name, "note": f"in memory only; POST /load?dataset={base} returns to the real data"}
