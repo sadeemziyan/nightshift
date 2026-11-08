@@ -117,3 +117,23 @@ export function actionText(alert) {
   if (a.type === 'field_inspection') return 'Send an inspector'
   return a.type.replace(/_/g, ' ')
 }
+
+// Seconds -> "3:19:42" (a ticking countdown)
+export function fmtCountdown(seconds) {
+  const s = Math.max(0, Math.round(seconds))
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  return `${h}:${String(m).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+}
+
+export const usd = (x) => `$${Math.round(x).toLocaleString()}`
+
+// 0.03 -> "3%"; tiny but nonzero -> "<1%"
+export function fmtRisk(r) {
+  if (r == null) return '-'
+  if (r > 0 && r < 0.01) return '<1%'
+  return `${Math.round(r * 100)}%`
+}
+
+// Safety levels on the plan slider: null = just the cheapest plan.
+export const RISK_LEVELS = [null, 0.8, 0.9, 0.95, 0.99, 0.999]
