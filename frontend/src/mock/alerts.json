@@ -1,0 +1,39 @@
+{
+  "t": 1791420600,
+  "alerts": [
+    {
+      "event_id": "S1_PUMP_C@1791418800",
+      "system_id": "S1",
+      "facility_id": "S1_FACILITY_C",
+      "asset_id": "S1_PUMP_C",
+      "category": "pump_failure",
+      "status": "ongoing",
+      "onset_ts": "2026-10-08T00:20:00Z",
+      "onset_unix": 1791418800,
+      "end_ts": null,
+      "end_unix": null,
+      "detected_unix": 1791418800,
+      "confidence": 0.95,
+      "score": null,
+      "evidence": [
+        "Pump is in fault with zero flow while the tank level keeps rising."
+      ],
+      "level_pct": 54.6,
+      "hours_to_limit": {
+        "p50": 4.5,
+        "p10": null,
+        "p90": null
+      },
+      "recommended_actions": [
+        {
+          "type": "dispatch_truck",
+          "facility_id": "S1_FACILITY_C",
+          "trucks": 1,
+          "trips_per_truck": 1
+        }
+      ],
+      "source": "rules",
+      "order": 1
+    }
+  ]
+}

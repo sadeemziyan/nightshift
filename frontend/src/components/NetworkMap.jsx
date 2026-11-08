@@ -7,21 +7,51 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
-function NetworkMap({ system }) {
+function NetworkMap({ system, state }) {
   const nodes = []
   const edges = []
 
   function addNode(id, label, x, y) {
+    
+    const tank = state?.tanks?.find((item) => item.id === id)
+    const pump = state?.pumps?.find((item) => item.id === id)
+
+    let color = '#64748b'
+    let statusLabel = 'No reading'
+
+    if (tank) {
+    statusLabel = tank.state
+    color = {
+        normal: '#34d399',
+        warning: '#fbbf24',
+        shutdown: '#f87171',
+    }[tank.state] ?? '#64748b'
+    }
+
+    if (pump) {
+    statusLabel = {
+        0: 'Stopped',
+        1: 'Running',
+        2: 'Fault',
+    }[pump.status] ?? 'Unknown'
+
+    color = {
+        0: '#94a3b8',
+        1: '#34d399',
+        2: '#f87171',
+    }[pump.status] ?? '#64748b'
+    }
+
     nodes.push({
       id,
       position: { x, y },
-      data: { label },
+      data: { label: `${label} — ${statusLabel}` },
       sourcePosition: Position.Right,
       targetPosition: Position.Left,
       style: {
         background: '#0f172a',
         color: '#e2e8f0',
-        border: '1px solid #475569',
+        border: `2px solid ${color}`,
         borderRadius: 10,
         width: 180,
         padding: 12,

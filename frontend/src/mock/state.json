@@ -1,0 +1,32 @@
+{
+  "t": 1791418800,
+  "facilities": [
+    {
+      "id": "S1_FACILITY_C",
+      "system_id": "S1",
+      "inflow_bpd": 1810,
+      "shut_in": false
+    }
+  ],
+  "tanks": [
+    {
+      "id": "S1_TANK_C",
+      "facility_id": "S1_FACILITY_C",
+      "level_pct": 49.93,
+      "volume_bbl": 399.4,
+      "capacity_bbl": 800,
+      "state": "normal"
+    }
+  ],
+  "pumps": [
+    {
+      "id": "S1_PUMP_C",
+      "facility_id": "S1_FACILITY_C",
+      "status": 2,
+      "flow_bpd": 0,
+      "discharge_psi": 1049.5
+    }
+  ],
+  "pipelines": [],
+  "wells": []
+}

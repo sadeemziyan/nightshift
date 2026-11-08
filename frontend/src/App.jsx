@@ -1,3 +1,6 @@
+import AlertPanel from './components/AlertPanel'
+import mockAlerts from './mock/alerts.json'
+import mockState from './mock/state.json'
 import NetworkMap from './components/NetworkMap'
 import { useState } from 'react'
 import network from './mock/network.json'
@@ -50,7 +53,11 @@ function App() {
           <h2 className="text-xl font-semibold">
             {selectedSystem.id} facilities
           </h2>
-          <NetworkMap system={selectedSystem} />
+          <AlertPanel
+            alerts={mockAlerts.alerts}
+            systemId={selectedSystemId}
+          />
+          <NetworkMap system={selectedSystem} state={mockState} />
           <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {selectedSystem.facilities.map((facility) => (
               <article
