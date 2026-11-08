@@ -13,7 +13,7 @@ export function buildJobs(plan, alerts, t) {
           kind: 'truck',
           when: a.arrives_unix,
           urgency: 'high',
-          title: `Truck ${(i % trucks) + 1}, trip ${Math.floor(i / trucks) + 1}: haul water from ${f.facility_id}`,
+          title: `Truck ${(i % trucks) + 1} to ${f.facility_id}, trip ${Math.floor(i / trucks) + 1}: haul water to the disposal site`,
           detail: `Pick up ${Math.round(a.removes_bbl)} bbl and take it to the disposal site. Arrive ${fmtClock(a.arrives_unix)}Z.`,
           where: f.facility_id,
         })

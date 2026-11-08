@@ -141,7 +141,8 @@ function App() {
     [fallToMock, later]
   )
 
-  // On first load: list the dataset folders, then open full_week (or the first one found).
+  // On first load: list the dataset folders, then open the judging folder (test) if it is there, else the mock test
+  // (it has problems in progress), else full_week, else the first one found.
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -149,7 +150,11 @@ function App() {
         const { datasets: list } = await api.getDatasets()
         if (cancelled) return
         setDatasets(list)
-        const first = list.find((d) => d.id === 'full_week') ?? list[0]
+        const first =
+          list.find((d) => d.id === 'test') ??
+          list.find((d) => d.id.startsWith('mock_test')) ??
+          list.find((d) => d.id === 'full_week') ??
+          list[0]
         if (!first) throw new Error('no dataset folders found')
         await openDataset(first.id)
       } catch (err) {
