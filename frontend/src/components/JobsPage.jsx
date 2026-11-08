@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import Icon from './Icon'
 import { buildJobs } from '../jobs'
 import { URGENCY, fmtClock } from '../status'
+import { C } from '../theme'
 
 const KEY = 'nightshift.jobs.done'
 
@@ -21,9 +23,9 @@ function saveDone(set) {
 }
 
 const KIND = {
-  truck: { label: 'TRUCK', color: '#22d3ee' },
-  shutin: { label: 'SHUT IN', color: '#f59e0b' },
-  inspect: { label: 'INSPECT', color: '#a78bfa' },
+  truck: { label: 'TRUCK', color: C.data, icon: 'truck' },
+  shutin: { label: 'SHUT IN', color: C.warn, icon: 'valve' },
+  inspect: { label: 'INSPECT', color: C.violet, icon: 'wrench' },
 }
 
 function until(when, t) {
@@ -52,14 +54,15 @@ function JobsPage({ plan, alerts, t, loading, usingMock }) {
 
   return (
     <div className="mx-auto max-w-xl">
-      <h1 className="text-3xl font-bold">My jobs</h1>
-      <p className="mt-1 text-sm text-slate-400">
-        {open.length} to do{finished > 0 && `, ${finished} done`}. As of {fmtClock(t)}Z.
+      <h1 className="text-3xl font-semibold">My jobs</h1>
+      <p className="mt-1 text-sm text-muted">
+        <span className="num text-fg">{open.length}</span> to do{finished > 0 && `, ${finished} done`}. As of{' '}
+        <span className="num text-fg">{fmtClock(t)}Z</span>.
         {usingMock && ' Sample data.'}
       </p>
 
       {loading && jobs.length === 0 && (
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 space-y-2">
           {[0, 1, 2].map((i) => (
             <div key={i} className="skeleton h-32" />
           ))}
@@ -67,39 +70,38 @@ function JobsPage({ plan, alerts, t, loading, usingMock }) {
       )}
 
       {!loading && jobs.length === 0 && (
-        <p className="mt-6 rounded-xl bg-emerald-500/10 p-5 text-emerald-300">
+        <p className="banner mt-6 border-ok/30 bg-ok/8 p-4 text-base text-ok">
           No jobs right now. New ones show up here when a plan is approved or a pump needs a look.
         </p>
       )}
 
-      <ul className="mt-4 space-y-3">
+      <ul className="mt-4 space-y-2">
         {jobs.map((j) => {
           const isDone = done.has(j.id)
           const k = KIND[j.kind]
           return (
             <li
               key={j.id}
-              className={`rounded-xl border-l-8 bg-slate-900 p-4 ${isDone ? 'opacity-50' : ''}`}
-              style={{ borderLeftColor: k.color }}
+              className="panel border-l-4 p-4"
+              style={{ borderLeftColor: isDone ? C.lineStrong : k.color }}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="rounded px-2 py-0.5 text-xs font-bold text-slate-900" style={{ background: k.color }}>
+                <span className="tag text-ink" style={{ background: isDone ? C.off : k.color }}>
+                  <Icon name={k.icon} size={14} />
                   {k.label}
                 </span>
-                <span className="text-sm font-semibold text-slate-200">{until(j.when, t)}</span>
+                <span className="num text-sm font-semibold text-fg">{until(j.when, t)}</span>
               </div>
-              <p className={`mt-3 text-lg font-semibold leading-snug ${isDone ? 'line-through' : ''}`}>{j.title}</p>
-              <p className="mt-1 text-sm text-slate-300">{j.detail}</p>
-              <div className="mt-3 flex items-center justify-between gap-3">
-                <span className="text-xs text-slate-500">
+              <p className={`mt-4 text-lg font-semibold leading-snug ${isDone ? 'text-muted line-through' : ''}`}>{j.title}</p>
+              <p className={`mt-1 text-sm ${isDone ? 'text-faint' : 'text-muted'}`}>{j.detail}</p>
+              <div className="mt-4 flex items-center justify-between gap-4">
+                <span className="num text-xs text-faint">
                   {j.where} | {(URGENCY[j.urgency] ?? URGENCY.low).label}
                 </span>
                 <button
                   type="button"
                   onClick={() => toggle(j.id)}
-                  className={`min-h-12 min-w-28 rounded-lg px-4 font-semibold ${
-                    isDone ? 'border border-slate-600 text-slate-300' : 'bg-emerald-400 text-slate-950'
-                  }`}
+                  className={`btn min-h-12 min-w-32 text-base ${isDone ? 'btn-ghost' : 'bg-ok text-ink hover:bg-ok/85'}`}
                 >
                   {isDone ? 'Undo' : 'Done'}
                 </button>
