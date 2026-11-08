@@ -1,12 +1,14 @@
 // Turns /state and /alerts into one color per asset: green normal, yellow warning, red failing,
 // gray shut in. Nothing here knows a facility name; everything is looked up by id.
 
+import { C, tint } from './theme'
+
 export const TONE = {
-  ok: { border: '#22c55e', bg: 'rgba(34,197,94,0.10)', text: '#bbf7d0', label: 'Normal' },
-  warn: { border: '#eab308', bg: 'rgba(234,179,8,0.12)', text: '#fef08a', label: 'Warning' },
-  bad: { border: '#ef4444', bg: 'rgba(239,68,68,0.15)', text: '#fecaca', label: 'Failing' },
-  off: { border: '#64748b', bg: 'rgba(100,116,139,0.14)', text: '#cbd5e1', label: 'Shut in' },
-  idle: { border: '#475569', bg: '#0f172a', text: '#e2e8f0', label: '' },
+  ok: { border: C.ok, bg: tint(C.ok, 10), text: C.ok, label: 'Normal' },
+  warn: { border: C.warn, bg: tint(C.warn, 10), text: C.warn, label: 'Warning' },
+  bad: { border: C.bad, bg: tint(C.bad, 14), text: C.bad, label: 'Failing' },
+  off: { border: C.off, bg: tint(C.off, 12), text: C.off, label: 'Shut in' },
+  idle: { border: C.lineStrong, bg: C.surface, text: C.fg, label: '' },
 }
 
 const SEVERITY = { idle: 0, ok: 0, off: 1, warn: 2, bad: 3 }
@@ -89,10 +91,10 @@ export function fmtHours(h) {
 }
 
 export const URGENCY = {
-  critical: { rank: 0, label: 'Critical', color: '#ef4444' },
-  high: { rank: 1, label: 'High', color: '#f97316' },
-  medium: { rank: 2, label: 'Medium', color: '#eab308' },
-  low: { rank: 3, label: 'Low', color: '#22c55e' },
+  critical: { rank: 0, label: 'Critical', color: C.crit },
+  high: { rank: 1, label: 'High', color: C.high },
+  medium: { rank: 2, label: 'Medium', color: C.warn },
+  low: { rank: 3, label: 'Low', color: C.ok },
 }
 
 export const CATEGORY = {
