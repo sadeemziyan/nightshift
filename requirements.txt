@@ -2,6 +2,7 @@ fastapi
 uvicorn
 pandas
 numpy
+matplotlib
 pulp
 scikit-learn
 scipy
