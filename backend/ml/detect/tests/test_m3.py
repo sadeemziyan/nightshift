@@ -129,8 +129,8 @@ def _string_constants_outside_docstrings(path: Path) -> list[str]:
 
 def test_only_the_offline_scripts_may_open_the_answer_key():
     """Hard rule 2: no app code path may name answer_key.json in code. Docstrings and comments may mention it."""
-    # offline scripts only; optimizer/validate.py is Sadeem's offline plan-cost check against the key (not in the app path)
-    allowed = {"scorecard.py", "evaluate.py", "classifier.py", "check_m1.py", "validate.py"}
+    # offline scripts only; optimizer/validate.py and ml/detect/stress.py are offline checks against the key (not in the app path)
+    allowed = {"scorecard.py", "evaluate.py", "classifier.py", "check_m1.py", "validate.py", "stress.py"}
     for path in (ROOT / "backend").rglob("*.py"):
         if "tests" in path.parts or path.name in allowed:
             continue
