@@ -1,0 +1,211 @@
+{
+  "generated_unix": 1794118900,
+  "detector": "rules + M1/M2 + M3 (detect_with_m3)",
+  "folders": {
+    "full_week": {
+      "events": 23,
+      "found": 23,
+      "false_alarms": 0,
+      "mean_minutes_late": 67.4,
+      "by_category": {
+        "pipeline_leak": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 43.0,
+          "false_alarms": 0
+        },
+        "pump_degradation": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 267.0,
+          "false_alarms": 0
+        },
+        "pump_failure": {
+          "labelled": 13,
+          "found": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 0.0,
+          "false_alarms": 0
+        }
+      }
+    },
+    "snapshot_2026-10-08T1200": {
+      "events": 13,
+      "found": 13,
+      "false_alarms": 0,
+      "mean_minutes_late": 116.2,
+      "by_category": {
+        "pipeline_leak": {
+          "labelled": 3,
+          "found": 3,
+          "recall": 1.0,
+          "mean_minutes_late": 50.0,
+          "false_alarms": 0
+        },
+        "pump_degradation": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 272.0,
+          "false_alarms": 0
+        },
+        "pump_failure": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 0.0,
+          "false_alarms": 0
+        }
+      }
+    },
+    "snapshot_2026-10-09T0330": {
+      "events": 15,
+      "found": 15,
+      "false_alarms": 0,
+      "mean_minutes_late": 99.3,
+      "by_category": {
+        "pipeline_leak": {
+          "labelled": 3,
+          "found": 3,
+          "recall": 1.0,
+          "mean_minutes_late": 51.7,
+          "false_alarms": 0
+        },
+        "pump_degradation": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 267.0,
+          "false_alarms": 0
+        },
+        "pump_failure": {
+          "labelled": 7,
+          "found": 7,
+          "recall": 1.0,
+          "mean_minutes_late": 0.0,
+          "false_alarms": 0
+        }
+      }
+    },
+    "snapshot_2026-10-10T0900": {
+      "events": 21,
+      "found": 21,
+      "false_alarms": 0,
+      "mean_minutes_late": 72.6,
+      "by_category": {
+        "pipeline_leak": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 43.0,
+          "false_alarms": 0
+        },
+        "pump_degradation": {
+          "labelled": 5,
+          "found": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 262.0,
+          "false_alarms": 0
+        },
+        "pump_failure": {
+          "labelled": 11,
+          "found": 11,
+          "recall": 1.0,
+          "mean_minutes_late": 0.0,
+          "false_alarms": 0
+        }
+      }
+    }
+  },
+  "headline": {
+    "events": 23,
+    "found": 23,
+    "false_alarms": 0,
+    "mean_minutes_late": 67.4
+  },
+  "plans": {
+    "pump_failures": 13,
+    "cost_matches_reference": 13,
+    "note": "optimizer given the true onset and tank level; match = within 1% or $25"
+  },
+  "leave_one_system_out": {
+    "comparison": {
+      "rules": {
+        "recall": 1.0,
+        "mean_minutes_late": 91.3
+      },
+      "models": {
+        "recall": 1.0,
+        "mean_minutes_late": 52.2
+      },
+      "ensemble": {
+        "recall": 1.0,
+        "mean_minutes_late": 52.2
+      }
+    },
+    "folds": [
+      {
+        "held_out_system": "S1",
+        "precision": 1.0,
+        "recall": 1.0,
+        "mean_minutes_late": 37.5,
+        "events": 4,
+        "train_rows": {
+          "simulated": 4500,
+          "real": 563
+        }
+      },
+      {
+        "held_out_system": "S2",
+        "precision": 0.988,
+        "recall": 1.0,
+        "mean_minutes_late": 54.0,
+        "events": 5,
+        "train_rows": {
+          "simulated": 4500,
+          "real": 553
+        }
+      },
+      {
+        "held_out_system": "S3",
+        "precision": 1.0,
+        "recall": 1.0,
+        "mean_minutes_late": 60.0,
+        "events": 3,
+        "train_rows": {
+          "simulated": 4500,
+          "real": 598
+        }
+      },
+      {
+        "held_out_system": "S4",
+        "precision": 0.99,
+        "recall": 1.0,
+        "mean_minutes_late": 51.4,
+        "events": 7,
+        "train_rows": {
+          "simulated": 4500,
+          "real": 510
+        }
+      },
+      {
+        "held_out_system": "S5",
+        "precision": 1.0,
+        "recall": 1.0,
+        "mean_minutes_late": 60.0,
+        "events": 4,
+        "train_rows": {
+          "simulated": 4500,
+          "real": 564
+        }
+      }
+    ],
+    "false_alarm_rate": {
+      "rules": 0.0,
+      "sim": 0.0066,
+      "ensemble": 0.0066
+    }
+  }
+}

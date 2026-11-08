@@ -1,0 +1,990 @@
+{
+  "generated_unix": 1794119519,
+  "dataset": "full_week",
+  "threshold": 0.8,
+  "reference": "problem start and alert time come from the sensor-only rule detector, not the answer key",
+  "summary": {
+    "events": 10,
+    "warned_before_rule_alert": 5,
+    "mean_minutes_earlier": 119.2,
+    "pipeline_leak": {
+      "events": 5,
+      "mean_minutes_earlier": null
+    },
+    "pump_degradation": {
+      "events": 5,
+      "mean_minutes_earlier": 119.2
+    }
+  },
+  "lead_times": [
+    {
+      "event_id": "S3_PIPELINE_B@1791183600",
+      "category": "pipeline_leak",
+      "rule_alert_after_onset_min": 30.0,
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
+    },
+    {
+      "event_id": "S5_PUMP_A@1791199190",
+      "category": "pump_degradation",
+      "rule_alert_after_onset_min": 250.2,
+      "m3_warning_after_onset_min": 210.0,
+      "warned_first_by_min": 40.2
+    },
+    {
+      "event_id": "S2_PUMP_A@1791230534",
+      "category": "pump_degradation",
+      "rule_alert_after_onset_min": 257.8,
+      "m3_warning_after_onset_min": 150.0,
+      "warned_first_by_min": 107.8
+    },
+    {
+      "event_id": "S4_PIPELINE_A@1791251700",
+      "category": "pipeline_leak",
+      "rule_alert_after_onset_min": 30.0,
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
+    },
+    {
+      "event_id": "S1_PUMP_C@1791288656",
+      "category": "pump_degradation",
+      "rule_alert_after_onset_min": 259.1,
+      "m3_warning_after_onset_min": 120.0,
+      "warned_first_by_min": 139.1
+    },
+    {
+      "event_id": "S3_PUMP_A@1791360723",
+      "category": "pump_degradation",
+      "rule_alert_after_onset_min": 292.9,
+      "m3_warning_after_onset_min": 90.0,
+      "warned_first_by_min": 202.9
+    },
+    {
+      "event_id": "S4_PUMP_C@1791381845",
+      "category": "pump_degradation",
+      "rule_alert_after_onset_min": 285.9,
+      "m3_warning_after_onset_min": 180.0,
+      "warned_first_by_min": 105.9
+    },
+    {
+      "event_id": "S5_PIPELINE_B@1791439800",
+      "category": "pipeline_leak",
+      "rule_alert_after_onset_min": 30.0,
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
+    },
+    {
+      "event_id": "S1_PIPELINE_B@1791518400",
+      "category": "pipeline_leak",
+      "rule_alert_after_onset_min": 30.0,
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
+    },
+    {
+      "event_id": "S2_PIPELINE_C@1791540000",
+      "category": "pipeline_leak",
+      "rule_alert_after_onset_min": 30.0,
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
+    }
+  ],
+  "false_warnings": {
+    "times_checked": 78,
+    "warnings_raised": 28,
+    "false_warnings": 13,
+    "examples": [
+      {
+        "t": 1791201600,
+        "facility_id": "S2_FACILITY_B",
+        "category": "pump_degradation",
+        "probability": 0.866
+      },
+      {
+        "t": 1791208800,
+        "facility_id": "S5_FACILITY_B",
+        "category": "pipeline_leak",
+        "probability": 0.943
+      },
+      {
+        "t": 1791230400,
+        "facility_id": "S4_FACILITY_D",
+        "category": "pipeline_leak",
+        "probability": 0.887
+      },
+      {
+        "t": 1791230400,
+        "facility_id": "S2_FACILITY_B",
+        "category": "pump_degradation",
+        "probability": 0.83
+      },
+      {
+        "t": 1791266400,
+        "facility_id": "S3_FACILITY_A",
+        "category": "pipeline_leak",
+        "probability": 0.876
+      }
+    ]
+  },
+  "curves": [
+    {
+      "event_id": "S3_PIPELINE_B@1791183600",
+      "category": "pipeline_leak",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.457
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.587
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.995,
+          "drift_score": 0.664
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.728
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.786
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.834
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.873
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.995,
+          "drift_score": 0.913
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.946
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.995,
+          "drift_score": 0.976
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.997,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.997,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.998,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.998,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.998,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.995,
+          "drift_score": 1.0
+        }
+      ]
+    },
+    {
+      "event_id": "S5_PUMP_A@1791199190",
+      "category": "pump_degradation",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.108,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.091,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.091,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.082,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.153,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.397,
+          "drift_score": 0.09
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.21
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.347
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.467
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.527
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.59
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.633
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.676
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.72
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.76
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.793
+        }
+      ]
+    },
+    {
+      "event_id": "S2_PUMP_A@1791230534",
+      "category": "pump_degradation",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.01,
+          "drift_score": 0.062
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.012,
+          "drift_score": 0.062
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.006,
+          "drift_score": 0.062
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.044,
+          "drift_score": 0.069
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.809,
+          "drift_score": 0.169
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.994,
+          "drift_score": 0.228
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.304
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.386
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.482
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.552
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.604
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.641
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.683
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.723
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.994,
+          "drift_score": 0.763
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.994,
+          "drift_score": 0.798
+        }
+      ]
+    },
+    {
+      "event_id": "S4_PIPELINE_A@1791251700",
+      "category": "pipeline_leak",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.408
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.547
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.636
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.7
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.76
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.808
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.99,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.993,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.992,
+          "drift_score": 0.839
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.884
+        }
+      ]
+    },
+    {
+      "event_id": "S1_PUMP_C@1791288656",
+      "category": "pump_degradation",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.165,
+          "drift_score": 0.113
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.211,
+          "drift_score": 0.113
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.34,
+          "drift_score": 0.113
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.993,
+          "drift_score": 0.139
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.969,
+          "drift_score": 0.186
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.979,
+          "drift_score": 0.235
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.331
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.422
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.993,
+          "drift_score": 0.477
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.54
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.595
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.645
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.679
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.72
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.748
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.989,
+          "drift_score": 0.78
+        }
+      ]
+    },
+    {
+      "event_id": "S3_PUMP_A@1791360723",
+      "category": "pump_degradation",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.031,
+          "drift_score": 0.069
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.041,
+          "drift_score": 0.069
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.509,
+          "drift_score": 0.069
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.184
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.252
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.295
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.376
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.413
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.475
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.995,
+          "drift_score": 0.542
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.591
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.995,
+          "drift_score": 0.641
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.681
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.715
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.994,
+          "drift_score": 0.72
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.993,
+          "drift_score": 0.72
+        }
+      ]
+    },
+    {
+      "event_id": "S4_PUMP_C@1791381845",
+      "category": "pump_degradation",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.028,
+          "drift_score": 0.102
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.029,
+          "drift_score": 0.102
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.027,
+          "drift_score": 0.102
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.03,
+          "drift_score": 0.102
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.053,
+          "drift_score": 0.102
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.994,
+          "drift_score": 0.257
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.379
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.429
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.5
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.555
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.605
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.657
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.993,
+          "drift_score": 0.695
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.728
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.764
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.793
+        }
+      ]
+    },
+    {
+      "event_id": "S5_PIPELINE_B@1791439800",
+      "category": "pipeline_leak",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.992,
+          "drift_score": 0.448
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.581
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.658
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.723
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.779
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.824
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.866
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.994,
+          "drift_score": 0.903
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.995,
+          "drift_score": 0.935
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.968
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.995,
+          "drift_score": 0.996
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.998,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.999,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.999,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.999,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.999,
+          "drift_score": 1.0
+        }
+      ]
+    },
+    {
+      "event_id": "S1_PIPELINE_B@1791518400",
+      "category": "pipeline_leak",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.987,
+          "drift_score": 0.404
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.542
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.995,
+          "drift_score": 0.63
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.698
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.759
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.808
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.854
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.894
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.996,
+          "drift_score": 0.929
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.999,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.933
+        }
+      ]
+    },
+    {
+      "event_id": "S2_PIPELINE_C@1791540000",
+      "category": "pipeline_leak",
+      "points": [
+        {
+          "hours": 0.5,
+          "m3_probability": 0.992,
+          "drift_score": 0.427
+        },
+        {
+          "hours": 1.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.543
+        },
+        {
+          "hours": 1.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.626
+        },
+        {
+          "hours": 2.0,
+          "m3_probability": 0.996,
+          "drift_score": 0.695
+        },
+        {
+          "hours": 2.5,
+          "m3_probability": 0.997,
+          "drift_score": 0.754
+        },
+        {
+          "hours": 3.0,
+          "m3_probability": 0.998,
+          "drift_score": 0.806
+        },
+        {
+          "hours": 3.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.851
+        },
+        {
+          "hours": 4.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.89
+        },
+        {
+          "hours": 4.5,
+          "m3_probability": 0.998,
+          "drift_score": 0.924
+        },
+        {
+          "hours": 5.0,
+          "m3_probability": 0.997,
+          "drift_score": 0.958
+        },
+        {
+          "hours": 5.5,
+          "m3_probability": 0.999,
+          "drift_score": 0.989
+        },
+        {
+          "hours": 6.0,
+          "m3_probability": 0.997,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 6.5,
+          "m3_probability": 0.996,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.0,
+          "m3_probability": 0.997,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 7.5,
+          "m3_probability": 0.998,
+          "drift_score": 1.0
+        },
+        {
+          "hours": 8.0,
+          "m3_probability": 0.997,
+          "drift_score": 1.0
+        }
+      ]
+    }
+  ]
+}
