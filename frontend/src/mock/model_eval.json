@@ -1,0 +1,78 @@
+{
+  "mock_notice": "PLACEHOLDER NUMBERS FOR LAYOUT ONLY. Real results come from /model/eval, which reads docs/model_eval.json written by the evaluation script. Never show these on a slide.",
+  "generated_unix": 1791453900,
+  "method": "leave-one-system-out",
+  "folds": [
+    {
+      "held_out_system": "S1",
+      "precision": 0.8,
+      "recall": 0.8,
+      "mean_minutes_late": 40
+    },
+    {
+      "held_out_system": "S2",
+      "precision": 0.75,
+      "recall": 0.75,
+      "mean_minutes_late": 45
+    },
+    {
+      "held_out_system": "S3",
+      "precision": 0.7,
+      "recall": 0.7,
+      "mean_minutes_late": 50
+    },
+    {
+      "held_out_system": "S4",
+      "precision": 0.85,
+      "recall": 0.85,
+      "mean_minutes_late": 35
+    },
+    {
+      "held_out_system": "S5",
+      "precision": 0.9,
+      "recall": 0.9,
+      "mean_minutes_late": 30
+    }
+  ],
+  "comparison": {
+    "rules": {
+      "recall": 0.7,
+      "mean_minutes_late": 50
+    },
+    "models": {
+      "recall": 0.75,
+      "mean_minutes_late": 45
+    },
+    "ensemble": {
+      "recall": 0.8,
+      "mean_minutes_late": 40
+    }
+  },
+  "calibration_bins": [
+    {
+      "p_mean": 0.1,
+      "observed": 0.1,
+      "n": 100
+    },
+    {
+      "p_mean": 0.3,
+      "observed": 0.3,
+      "n": 80
+    },
+    {
+      "p_mean": 0.5,
+      "observed": 0.5,
+      "n": 60
+    },
+    {
+      "p_mean": 0.7,
+      "observed": 0.7,
+      "n": 40
+    },
+    {
+      "p_mean": 0.9,
+      "observed": 0.9,
+      "n": 20
+    }
+  ]
+}

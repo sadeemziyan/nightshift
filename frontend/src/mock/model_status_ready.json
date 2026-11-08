@@ -1,0 +1,25 @@
+{
+  "dataset": "full_week",
+  "status": "ready",
+  "models": {
+    "M1": {
+      "ready": true,
+      "fit_seconds": 4.2
+    },
+    "M2": {
+      "ready": true,
+      "fit_seconds": 0.8
+    },
+    "M3": {
+      "ready": true,
+      "fit_seconds": 0.1
+    },
+    "M4": {
+      "ready": true,
+      "fit_seconds": 1.5
+    }
+  },
+  "pumps_calibrated": 15,
+  "pumps_total": 15,
+  "mock_notice": "PLACEHOLDER: shows the 'ready' state for the Learning-this-network step. The real status comes from /model/status."
+}

@@ -1,0 +1,12 @@
+{
+  "dataset": "full_week",
+  "now_unix": 1791762900,
+  "now_ts": "2026-10-11T23:55:00Z",
+  "systems": 5,
+  "facilities": 15,
+  "models": {
+    "status": "rules-only",
+    "seconds": 0.0,
+    "pumps_calibrated": 0
+  }
+}

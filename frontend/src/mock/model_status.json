@@ -1,0 +1,24 @@
+{
+  "dataset": "full_week",
+  "status": "rules-only",
+  "models": {
+    "M1": {
+      "ready": false,
+      "fit_seconds": null
+    },
+    "M2": {
+      "ready": false,
+      "fit_seconds": null
+    },
+    "M3": {
+      "ready": false,
+      "fit_seconds": null
+    },
+    "M4": {
+      "ready": false,
+      "fit_seconds": null
+    }
+  },
+  "pumps_calibrated": 0,
+  "pumps_total": 15
+}
