@@ -1,14 +1,27 @@
 import { Area, CartesianGrid, ComposedChart, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { fmtClock } from '../status'
-
-const TOOLTIP = { background: '#0f172a', border: '1px solid #334155' }
+import { AXIS, C, GRID, TOOLTIP, refLabel } from '../theme'
 
 export function SampleTag({ source }) {
   if (source !== 'mock') return null
+  return <SampleBadge>sample data: live baseline not available</SampleBadge>
+}
+
+// Yellow "this is sample data" marker. Lemon, not copper, so it never reads as brand.
+export function SampleBadge({ children }) {
+  return <span className="tag border border-warn/35 bg-warn/10 font-medium normal-case tracking-normal text-warn">{children}</span>
+}
+
+// The one chart card: caption on top, the plot in a recessed screen, optional instrument on the left.
+export function ChartCard({ caption, height = 'h-72', aside, children }) {
   return (
-    <span className="ml-2 rounded bg-amber-500/20 px-2 py-0.5 text-amber-300">
-      sample data: live baseline not available
-    </span>
+    <div className="panel p-4">
+      <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">{caption}</p>
+      <div className={`flex gap-3 ${height}`}>
+        {aside}
+        <div className="screen min-w-0 flex-1 p-2">{children}</div>
+      </div>
+    </div>
   )
 }
 
@@ -23,26 +36,30 @@ export function BandChart({ result, height = 'h-72' }) {
     band: Math.max(0, p.upper - p.lower),
   }))
   return (
-    <div>
-      <p className="mb-2 text-sm text-slate-400">
-        {data.asset_id} {data.metric} ({data.unit}) against its learned normal.
-        <SampleTag source={source} />
-      </p>
-      <div className={`${height} rounded-xl border border-slate-800 bg-slate-900 p-3`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rows}>
-            <CartesianGrid stroke="#1e293b" />
-            <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} stroke="#64748b" />
-            <YAxis stroke="#64748b" />
-            <Tooltip labelFormatter={fmtClock} contentStyle={TOOLTIP} />
-            <Area dataKey="lo" stackId="band" stroke="none" fill="transparent" isAnimationActive={false} tooltipType="none" />
-            <Area dataKey="band" stackId="band" stroke="none" fill="#22d3ee" fillOpacity={0.18} isAnimationActive={false} tooltipType="none" />
-            <Line dataKey="expected" name="Learned normal" stroke="#22d3ee" strokeDasharray="5 4" dot={false} isAnimationActive={false} />
-            <Line dataKey="actual" name="Actual" stroke="#f8fafc" strokeWidth={2} dot={false} isAnimationActive={false} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <ChartCard
+      height={height}
+      caption={
+        <>
+          <span>
+            <span className="num text-fg">{data.asset_id}</span> {data.metric} ({data.unit}) against its learned normal.
+          </span>
+          <SampleTag source={source} />
+        </>
+      }
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        <ComposedChart data={rows}>
+          <CartesianGrid {...GRID} />
+          <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} {...AXIS} />
+          <YAxis {...AXIS} />
+          <Tooltip labelFormatter={fmtClock} {...TOOLTIP} />
+          <Area dataKey="lo" stackId="band" stroke="none" fill="transparent" isAnimationActive={false} tooltipType="none" />
+          <Area dataKey="band" stackId="band" stroke="none" fill={C.data} fillOpacity={0.15} isAnimationActive={false} tooltipType="none" />
+          <Line dataKey="expected" name="Learned normal" stroke={C.data} strokeWidth={1.5} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
+          <Line dataKey="actual" name="Actual" stroke={C.fg} strokeWidth={2} dot={false} isAnimationActive={false} />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </ChartCard>
   )
 }
 
@@ -52,23 +69,28 @@ export function ScoreChart({ result, height = 'h-56' }) {
   const rows = data.points.map((p) => ({ ts: p.ts_unix, score: p.score }))
   const peak = rows.reduce((m, r) => Math.max(m, r.score ?? 0), 0)
   return (
-    <div>
-      <p className="mb-2 text-sm text-slate-400">
-        Anomaly score over time: distance from learned normal. Above 3 means outside the band. Peak {peak.toFixed(1)}.
-        <SampleTag source={source} />
-      </p>
-      <div className={`${height} rounded-xl border border-slate-800 bg-slate-900 p-3`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={rows}>
-            <CartesianGrid stroke="#1e293b" />
-            <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} stroke="#64748b" />
-            <YAxis stroke="#64748b" scale="sqrt" domain={[0, (max) => Math.max(5, Math.ceil(max))]} />
-            <Tooltip labelFormatter={fmtClock} contentStyle={TOOLTIP} />
-            <ReferenceLine y={3} stroke="#eab308" strokeDasharray="4 4" label={{ value: 'outside normal', fill: '#eab308', fontSize: 11, position: 'insideTopLeft' }} />
-            <Line dataKey="score" name="Score" stroke="#f97316" strokeWidth={2} dot={false} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <ChartCard
+      height={height}
+      caption={
+        <>
+          <span>
+            Anomaly score over time: distance from learned normal. Above 3 means outside the band. Peak{' '}
+            <span className="num text-fg">{peak.toFixed(1)}</span>.
+          </span>
+          <SampleTag source={source} />
+        </>
+      }
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={rows}>
+          <CartesianGrid {...GRID} />
+          <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} {...AXIS} />
+          <YAxis {...AXIS} scale="sqrt" domain={[0, (max) => Math.max(5, Math.ceil(max))]} />
+          <Tooltip labelFormatter={fmtClock} {...TOOLTIP} />
+          <ReferenceLine y={3} stroke={C.warn} strokeDasharray="4 4" label={refLabel('outside normal', C.warn)} />
+          <Line dataKey="score" name="Score" stroke={C.data} strokeWidth={2} dot={false} isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </ChartCard>
   )
 }

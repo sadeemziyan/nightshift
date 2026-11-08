@@ -4,9 +4,9 @@ import * as api from '../api'
 import { mock } from '../mock'
 import { useBaseline } from '../hooks'
 import { BandChart, ScoreChart } from './BaselineCharts'
+import Icon from './Icon'
 import { CATEGORY } from '../status'
-
-const TOOLTIP = { background: '#0f172a', border: '1px solid #334155' }
+import { AXIS, C, GRID, TOOLTIP } from '../theme'
 const MODELS = [
   ['M1', 'Learned normal'],
   ['M2', 'Wear detector'],
@@ -45,11 +45,21 @@ function useLive(fetcher, fallback) {
   return state
 }
 
+// Copper eyebrow over a section heading: a short length of pipe.
+function Eyebrow() {
+  return (
+    <div className="mb-2 flex items-center gap-2 text-brand" aria-hidden="true">
+      <Icon name="pipe" size={16} />
+      <span className="h-px w-12 bg-brand/60" />
+    </div>
+  )
+}
+
 function Card({ title, children, note }) {
   return (
-    <section className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+    <section className="panel p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
-      {note && <p className="mt-1 text-sm text-slate-400">{note}</p>}
+      {note && <p className="mt-1 text-sm text-muted">{note}</p>}
       <div className="mt-4">{children}</div>
     </section>
   )
@@ -59,23 +69,23 @@ function Reasons({ alert }) {
   const reasons = alert.reasons?.length ? alert.reasons : (alert.evidence ?? [])
   const m3 = alert.m3
   return (
-    <li className="rounded-lg bg-slate-800 p-3 text-sm">
+    <li className="rounded-sm border border-line bg-surface-2 p-3 text-sm">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-semibold">{CATEGORY[alert.category] ?? alert.category}</span>
-        <span className="rounded bg-slate-700 px-2 py-0.5 text-xs text-slate-300">source: {alert.source ?? 'rules'}</span>
+        <span className="tag border border-line-strong font-medium normal-case tracking-normal text-muted">source: {alert.source ?? 'rules'}</span>
         {alert.score != null && (
-          <span className="rounded bg-cyan-500/20 px-2 py-0.5 text-xs text-cyan-300">score {Number(alert.score).toFixed(1)}</span>
+          <span className="tag border border-data/30 bg-data/10 font-medium normal-case tracking-normal text-data">score {Number(alert.score).toFixed(1)}</span>
         )}
-        {alert.simulated && <span className="rounded bg-red-500 px-2 py-0.5 text-xs font-bold text-white">SIMULATED</span>}
+        {alert.simulated && <span className="tag tag-sim">SIMULATED</span>}
       </div>
-      <ul className="mt-2 list-disc space-y-1 pl-5 text-slate-300">
+      <ul className="mt-2 list-disc space-y-1 pl-5 text-fg marker:text-faint">
         {reasons.map((r, i) => (
           <li key={i}>{r}</li>
         ))}
       </ul>
       {m3 && (
-        <p className="mt-2 text-xs text-slate-400">
-          Second opinion (M3): says <span className="font-semibold text-slate-200">{CATEGORY[m3.call] ?? m3.call}</span>
+        <p className="mt-2 text-sm text-muted">
+          Second opinion (M3): says <span className="font-semibold text-fg">{CATEGORY[m3.call] ?? m3.call}</span>
           {m3.agrees === false ? ', which disagrees with the rules' : ', which agrees with the rules'}.
           {m3.factors?.length > 0 && ` Main factors: ${m3.factors.map((f) => (typeof f === 'string' ? f : (f.name ?? f.feature ?? ''))).filter(Boolean).join(', ')}.`}
         </p>
@@ -118,12 +128,14 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Model Lab</h1>
-      <p className="mt-1 text-slate-400">How the app learns what normal looks like, and how well it spots problems it has not seen before.</p>
+      <Eyebrow />
+      <h1 className="text-3xl font-semibold">Model Lab</h1>
+      <p className="mt-1 text-muted">How the app learns what normal looks like, and how well it spots problems it has not seen before.</p>
 
       {simulated && (
-        <p className="mt-3 rounded-lg bg-red-500/15 px-4 py-2 text-sm font-semibold text-red-300">
-          SIMULATED: a fault was injected into this view. Charts include fake data.
+        <p className="banner mt-4 border-crit/60 bg-crit/12 font-semibold text-fg">
+          <span className="tag tag-sim">SIMULATED</span>
+          <span>a fault was injected into this view. Charts include fake data.</span>
         </p>
       )}
 
@@ -136,16 +148,17 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
             return (
               <span
                 key={id}
-                className={`rounded-full border px-3 py-1 text-sm ${
-                  ready ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-300' : 'border-slate-600 bg-slate-900 text-slate-400'
+                className={`tag border text-sm leading-8 font-medium normal-case tracking-normal ${
+                  ready ? 'border-ok/40 bg-ok/10 text-ok' : 'border-line-strong bg-surface text-off'
                 }`}
               >
+                <span className={`led ${ready ? '' : 'led-hollow'}`} />
                 {id} {name}: {ready ? 'ready' : 'not loaded'}
               </span>
             )
           })}
         {status && (
-          <span className="rounded-full border border-slate-700 px-3 py-1 text-sm text-slate-300">
+          <span className="tag border border-line-strong text-sm leading-8 font-medium normal-case tracking-normal text-muted">
             {status.data.pumps_calibrated} of {status.data.pumps_total} pumps calibrated
             {status.source === 'mock' && ' (sample)'}
           </span>
@@ -154,12 +167,12 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
 
       <div className="mt-6 flex flex-wrap items-end gap-4">
         <div>
-          <label htmlFor="lab-facility" className="mb-2 block text-sm text-slate-400">Facility</label>
+          <label htmlFor="lab-facility" className="eyebrow mb-2 block text-muted">Facility</label>
           <select
             id="lab-facility"
             value={facility?.id ?? ''}
             onChange={(e) => setFacilityId(e.target.value)}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
+            className="field"
           >
             {facilities.map((f) => (
               <option key={f.id} value={f.id}>{f.id}</option>
@@ -167,7 +180,7 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
           </select>
         </div>
         <div>
-          <label htmlFor="lab-metric" className="mb-2 block text-sm text-slate-400">Sensor</label>
+          <label htmlFor="lab-metric" className="eyebrow mb-2 block text-muted">Sensor</label>
           <select
             id="lab-metric"
             value={`${kind}:${metric}`}
@@ -176,7 +189,7 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
               setKind(k)
               setMetric(m)
             }}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
+            className="field"
           >
             {Object.entries(METRICS).flatMap(([k, list]) =>
               list.map(([m, label]) => (
@@ -186,12 +199,12 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
           </select>
         </div>
         <div>
-          <label htmlFor="lab-hours" className="mb-2 block text-sm text-slate-400">Window</label>
+          <label htmlFor="lab-hours" className="eyebrow mb-2 block text-muted">Window</label>
           <select
             id="lab-hours"
             value={hours}
             onChange={(e) => setHours(Number(e.target.value))}
-            className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
+            className="field"
           >
             {[6, 12, 24, 48].map((h) => (
               <option key={h} value={h}>Last {h} hours</option>
@@ -212,7 +225,7 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
       <div className="mt-6">
         <Card title={`Why the app flagged ${assetId ?? 'this asset'}`}>
           {assetAlerts.length === 0 ? (
-            <p className="text-sm text-slate-400">Nothing flagged on this asset at this time. Pick another facility, or move the time slider to a problem.</p>
+            <p className="text-sm text-muted">Nothing flagged on this asset at this time. Pick another facility, or move the time slider to a problem.</p>
           ) : (
             <ul className="space-y-3">
               {assetAlerts.map((a) => (
@@ -223,17 +236,23 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
         </Card>
       </div>
 
-      <h2 className="mt-10 text-2xl font-semibold">How well does it work?</h2>
+      <div className="mt-12">
+        <Eyebrow />
+        <h2 className="text-2xl font-semibold">How well does it work?</h2>
+      </div>
       {sample && (
-        <p className="mt-2 rounded-lg bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
-          {evalRes?.source === 'mock'
-            ? 'Evaluation results are not available yet. These are placeholder numbers for layout only.'
-            : 'Placeholder numbers for layout only.'}
+        <p className="banner mt-4 border-warn/40 bg-warn/8 text-warn">
+          <span className="led mt-1.5 self-start" aria-hidden="true" />
+          <span className="min-w-0 flex-1">
+            {evalRes?.source === 'mock'
+              ? 'Evaluation results are not available yet. These are placeholder numbers for layout only.'
+              : 'Placeholder numbers for layout only.'}
+          </span>
         </p>
       )}
       {!evalRes && <div className="skeleton mt-4 h-72" />}
       {evalEmpty && !sample && (
-        <p className="mt-4 rounded-xl border border-slate-800 bg-slate-900 p-5 text-slate-300">
+        <p className="panel mt-4 p-4 text-fg">
           The evaluation has not been run yet. Run the evaluation script to fill this section.
         </p>
       )}
@@ -242,21 +261,21 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
           <Card title="Tested on a system it never saw" note={`Method: ${ev.method}. Each row hides one whole system while learning, then tries to find that system's problems.`}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="text-slate-400">
+                <thead className="eyebrow text-muted">
                   <tr>
-                    <th className="py-2 pr-4">Held-out system</th>
-                    <th className="py-2 pr-4">Precision</th>
-                    <th className="py-2 pr-4">Recall</th>
-                    <th className="py-2 pr-4">Minutes late</th>
+                    <th className="py-2 pr-4 font-medium">Held-out system</th>
+                    <th className="py-2 pr-4 text-right font-medium">Precision</th>
+                    <th className="py-2 pr-4 text-right font-medium">Recall</th>
+                    <th className="py-2 pr-4 text-right font-medium">Minutes late</th>
                   </tr>
                 </thead>
                 <tbody>
                   {ev.folds.map((f) => (
-                    <tr key={f.held_out_system} className="border-t border-slate-800">
+                    <tr key={f.held_out_system} className="num border-t border-line">
                       <td className="py-2 pr-4 font-semibold">{f.held_out_system}</td>
-                      <td className="py-2 pr-4">{pct(f.precision)}</td>
-                      <td className="py-2 pr-4">{pct(f.recall)}</td>
-                      <td className="py-2 pr-4">{f.mean_minutes_late ?? '-'}</td>
+                      <td className="py-2 pr-4 text-right">{pct(f.precision)}</td>
+                      <td className="py-2 pr-4 text-right">{pct(f.recall)}</td>
+                      <td className="py-2 pr-4 text-right">{f.mean_minutes_late ?? '-'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -264,39 +283,39 @@ function ModelLab({ network, t, usingMock, alerts, simulated }) {
             </div>
           </Card>
           <Card title="How early it catches problems" note="Average minutes after a problem starts before it is flagged. Lower is better.">
-            <div className="h-64">
+            <div className="screen h-64 p-2">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={compare}>
-                  <CartesianGrid stroke="#1e293b" />
-                  <XAxis dataKey="name" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <Tooltip contentStyle={TOOLTIP} />
-                  <Bar dataKey="minutes" name="Minutes late" fill="#22d3ee" isAnimationActive={false} />
+                  <CartesianGrid {...GRID} vertical={false} />
+                  <XAxis dataKey="name" {...AXIS} />
+                  <YAxis {...AXIS} />
+                  <Tooltip {...TOOLTIP} cursor={{ fill: C.surface2 }} />
+                  <Bar dataKey="minutes" name="Minutes late" fill={C.data} maxBarSize={56} radius={[2, 2, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="num mt-2 text-sm text-muted">
               Recall: {compare.map((c) => `${c.name} ${pct(c.recall)}`).join(' | ')}
             </p>
           </Card>
           <Card title="Can you trust the confidence?" note="When it says 70% sure, it should be right about 70% of the time. The dashed line is perfect.">
-            <div className="h-64">
+            <div className="screen h-64 p-2">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={calibration}>
-                  <CartesianGrid stroke="#1e293b" />
-                  <XAxis dataKey="p_mean" type="number" domain={[0, 1]} tickFormatter={pct} stroke="#64748b" name="Said" />
-                  <YAxis domain={[0, 1]} tickFormatter={pct} stroke="#64748b" />
-                  <Tooltip contentStyle={TOOLTIP} formatter={pct} labelFormatter={(v) => `Said ${pct(v)}`} />
+                  <CartesianGrid {...GRID} />
+                  <XAxis dataKey="p_mean" type="number" domain={[0, 1]} tickFormatter={pct} {...AXIS} name="Said" />
+                  <YAxis domain={[0, 1]} tickFormatter={pct} {...AXIS} />
+                  <Tooltip {...TOOLTIP} formatter={pct} labelFormatter={(v) => `Said ${pct(v)}`} />
                   <Legend />
-                  <Line dataKey="ideal" name="Perfect" stroke="#64748b" strokeDasharray="5 4" dot={false} isAnimationActive={false} />
-                  <Line dataKey="observed" name="Actually right" stroke="#34d399" strokeWidth={2} dot isAnimationActive={false} />
+                  <Line dataKey="ideal" name="Perfect" stroke={C.faint} strokeDasharray="5 4" dot={false} isAnimationActive={false} />
+                  <Line dataKey="observed" name="Actually right" stroke={C.data} strokeWidth={2} dot={{ r: 3, fill: C.data, stroke: C.ink }} isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </Card>
           {ev.notes && (
             <Card title="Notes">
-              <p className="text-sm text-slate-300">{Array.isArray(ev.notes) ? ev.notes.join(' ') : String(ev.notes)}</p>
+              <p className="text-sm text-fg">{Array.isArray(ev.notes) ? ev.notes.join(' ') : String(ev.notes)}</p>
             </Card>
           )}
         </div>

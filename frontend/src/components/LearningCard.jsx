@@ -3,11 +3,11 @@ function LearningCard({ state }) {
   if (!state) return null
   if (state.phase === 'learning') {
     return (
-      <div className="mt-4 rounded-xl border border-cyan-500/40 bg-cyan-500/10 p-4" role="status">
-        <p className="font-semibold text-cyan-300">Learning this network...</p>
-        <p className="mt-1 text-sm text-slate-300">Fitting each pump's normal behavior from {state.dataset}.</p>
-        <div className="mt-3 h-2 overflow-hidden rounded bg-slate-800">
-          <div className="indeterminate h-full rounded bg-cyan-400" />
+      <div className="banner mt-4 flex-col items-stretch border-data/40 bg-data/6 py-3" role="status">
+        <p className="font-semibold text-data">Learning this network...</p>
+        <p className="text-sm text-muted">Fitting each pump's normal behavior from <span className="num text-fg">{state.dataset}</span>.</p>
+        <div className="mt-1 h-1 overflow-hidden rounded-[1px] bg-surface-2">
+          <div className="indeterminate h-full" />
         </div>
       </div>
     )
@@ -15,16 +15,14 @@ function LearningCard({ state }) {
   const m = state.models ?? {}
   const ready = m.status === 'ready'
   return (
-    <div
-      className={`mt-4 rounded-xl border p-4 ${ready ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-amber-500/40 bg-amber-500/10'}`}
-      role="status"
-    >
+    <div className={`banner mt-4 ${ready ? 'border-ok/40 bg-ok/8 text-ok' : 'border-warn/40 bg-warn/8 text-warn'}`} role="status">
+      <span className="led mt-1.5 self-start" aria-hidden="true" />
       {ready ? (
-        <p className="font-semibold text-emerald-300">
-          Learning complete: {m.pumps_calibrated} pumps calibrated in {m.seconds} s
+        <p className="min-w-0 flex-1 font-semibold">
+          Learning complete: <span className="num">{m.pumps_calibrated}</span> pumps calibrated in <span className="num">{m.seconds}</span> s
         </p>
       ) : (
-        <p className="font-semibold text-amber-300">Models are not available, so Nightshift is running on rules alone.</p>
+        <p className="min-w-0 flex-1 font-semibold">Models are not available, so Nightshift is running on rules alone.</p>
       )}
     </div>
   )

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AlertPanel from './components/AlertPanel'
 import FacilityDetail from './components/FacilityDetail'
+import Icon from './components/Icon'
 import InjectPanel from './components/InjectPanel'
 import JobsPage from './components/JobsPage'
 import LearningCard from './components/LearningCard'
+import Logo from './components/Logo'
 import ModelLab from './components/ModelLab'
 import NetworkMap from './components/NetworkMap'
 import ReplayControls from './components/ReplayControls'
@@ -294,17 +296,16 @@ function App() {
     return res
   }
 
+  const isCurrent = (id) => route === id || (id === 'console' && !TABS.some((x) => x[0] === route))
   const tabs = (
-    <nav className="flex gap-1 rounded-xl border border-slate-800 bg-slate-900 p-1" aria-label="Screens">
+    <nav className="flex gap-1 rounded-t-md border border-b-0 border-line bg-surface p-1 pb-0" aria-label="Screens">
       {TABS.map(([id, href, label]) => (
         <a
           key={id}
           href={href}
-          aria-current={route === id || (id === 'console' && !TABS.some((x) => x[0] === route)) ? 'page' : undefined}
-          className={`rounded-lg px-4 py-2 text-sm font-semibold ${
-            route === id || (id === 'console' && !TABS.some((x) => x[0] === route))
-              ? 'bg-cyan-500 text-slate-950'
-              : 'text-slate-300 hover:bg-slate-800'
+          aria-current={isCurrent(id) ? 'page' : undefined}
+          className={`nav-tab rounded-t-sm px-4 py-2 text-sm font-semibold ${
+            isCurrent(id) ? 'bg-data text-ink' : 'text-muted hover:bg-surface-2 hover:text-fg'
           }`}
         >
           {label}
@@ -317,24 +318,21 @@ function App() {
     <>
       {notice && (
         <p
-          className={`mt-4 rounded-lg border px-4 py-2 text-sm ${
-            usingMock
-              ? 'border-amber-500/50 bg-amber-500/10 text-amber-300'
-              : 'border-slate-700 bg-slate-900 text-slate-300'
-          }`}
+          className={`banner mt-4 ${usingMock ? 'border-warn/40 bg-warn/8 text-warn' : 'bg-surface text-muted'}`}
           role="status"
         >
-          {notice}
+          <span className="led mt-1.5 self-start" aria-hidden="true" />
+          <span className="min-w-0 flex-1">{notice}</span>
         </p>
       )}
       {simulated && (
-        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg border border-red-500/60 bg-red-500/15 px-4 py-2 text-sm text-red-200" role="status">
-          <span className="rounded bg-red-500 px-2 py-0.5 text-xs font-bold text-white">SIMULATED</span>
+        <div className="banner mt-4 border-crit/60 bg-crit/12 text-fg" role="status">
+          <span className="tag tag-sim">SIMULATED</span>
           <span>A fault was injected. What you see includes made-up data.</span>
           <button
             type="button"
             onClick={() => openDataset(datasetId)}
-            className="ml-auto rounded-lg border border-red-400 px-3 py-1 font-semibold hover:bg-red-500/20"
+            className="btn ml-auto min-h-8 border-crit/70 px-3 text-fg hover:bg-crit/20"
           >
             Back to real data
           </button>
@@ -342,12 +340,8 @@ function App() {
       )}
       {toast && (
         <p
-          className={`pop-in mt-4 rounded-lg border px-4 py-2 text-sm font-semibold ${
-            toast.tone === 'bad'
-              ? 'border-red-500/60 bg-red-500/15 text-red-200'
-              : toast.tone === 'sim'
-                ? 'border-red-500/60 bg-red-500/15 text-red-200'
-                : 'border-cyan-500/40 bg-cyan-500/10 text-cyan-200'
+          className={`banner pop-in mt-4 font-semibold text-fg ${
+            toast.tone === 'bad' || toast.tone === 'sim' ? 'border-crit/60 bg-crit/12' : 'border-data/40 bg-data/8'
           }`}
           role="status"
         >
@@ -359,15 +353,21 @@ function App() {
   )
 
   return (
-    <main className="min-h-screen bg-slate-950 p-4 text-slate-100 sm:p-6 xl:p-8">
+    <main className="min-h-screen p-4 text-fg sm:p-6 xl:p-8">
       <div className="mx-auto max-w-[120rem]">
-        <header className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-cyan-400">Operations console</p>
-            <p className="mt-1 text-4xl font-bold">Nightshift</p>
-            <p className="mt-2 text-slate-400">Detect problems. Compare plans. Dispatch crews.</p>
+        <header className="pipeline flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+          <div className="pb-4">
+            <p className="eyebrow text-brand">Operations console</p>
+            <div className="mt-2 flex items-center gap-3">
+              <Logo size={36} />
+              <p className="font-display text-4xl font-semibold tracking-tight">Nightshift</p>
+            </div>
+            <p className="mt-2 text-muted">Detect problems. Compare plans. Dispatch crews.</p>
           </div>
-          {tabs}
+          <div className="flex flex-col items-start gap-4 sm:items-end">
+            <ShiftClock t={t} speed={speed} playing={playing} />
+            {tabs}
+          </div>
         </header>
 
         {banners}
@@ -388,9 +388,9 @@ function App() {
           </div>
         ) : (
           <>
-            <div className="mt-6 flex flex-wrap items-end gap-6">
+            <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-4">
               <div>
-                <label htmlFor="dataset" className="mb-2 block text-sm text-slate-400">
+                <label htmlFor="dataset" className="eyebrow mb-2 block text-muted">
                   Dataset
                 </label>
                 <select
@@ -398,7 +398,7 @@ function App() {
                   value={datasetId}
                   disabled={usingMock || learning?.phase === 'learning'}
                   onChange={(e) => openDataset(e.target.value)}
-                  className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 disabled:opacity-60"
+                  className="field min-w-44"
                 >
                   {datasets.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -410,7 +410,7 @@ function App() {
 
               {network && (
                 <div>
-                  <label htmlFor="system" className="mb-2 block text-sm text-slate-400">
+                  <label htmlFor="system" className="eyebrow mb-2 block text-muted">
                     System
                   </label>
                   <select
@@ -420,7 +420,7 @@ function App() {
                       setSelectedSystemId(e.target.value)
                       setSelectedFacilityId('')
                     }}
-                    className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
+                    className="field min-w-24"
                   >
                     {network.systems.map((s) => (
                       <option key={s.id} value={s.id}>
@@ -433,8 +433,9 @@ function App() {
 
               {t != null && (
                 <div className="min-w-72 flex-1">
-                  <label htmlFor="time" className="mb-2 block text-sm text-slate-400">
-                    Time: <span className="font-semibold text-slate-100">{fmtTime(tSnap)}</span> | {active.length} active problem
+                  <label htmlFor="time" className="eyebrow mb-2 block text-muted">
+                    Time: <span className="num text-sm font-semibold normal-case tracking-normal text-fg">{fmtTime(tSnap)}</span> |{' '}
+                    <span className="num text-sm text-fg">{active.length}</span> active problem
                     {active.length === 1 ? '' : 's'}
                   </label>
                   <input
@@ -450,7 +451,8 @@ function App() {
                       tRef.current = v
                       setT(v)
                     }}
-                    className="w-full accent-cyan-400"
+                    className="slider"
+                    style={{ '--fill': `${range.max > range.min ? ((tSnap - range.min) / (range.max - range.min)) * 100 : 100}%` }}
                   />
                 </div>
               )}
@@ -479,10 +481,10 @@ function App() {
               </div>
             )}
 
-            <ul className="mt-6 flex flex-wrap gap-4 text-sm text-slate-300">
+            <ul className="eyebrow mt-6 flex flex-wrap gap-x-6 gap-y-2 text-muted">
               {['ok', 'warn', 'bad', 'off'].map((k) => (
                 <li key={k} className="flex items-center gap-2">
-                  <span className="inline-block h-3 w-3 rounded-full" style={{ background: TONE[k].border }} />
+                  <span className="led" style={{ color: TONE[k].border }} />
                   {TONE[k].label}
                 </li>
               ))}
@@ -490,7 +492,7 @@ function App() {
 
             {system ? (
               <>
-                <div className="mt-6 grid gap-6 xl:grid-cols-[24rem_1fr]">
+                <div className="mt-4 grid gap-6 xl:grid-cols-[20rem_minmax(0,1fr)] 2xl:grid-cols-[24rem_minmax(0,1fr)]">
                   <AlertPanel
                     alerts={snapshot.alerts}
                     selectedFacilityId={facility?.id}
@@ -498,49 +500,62 @@ function App() {
                     fresh={fresh}
                     loading={!usingMock && snapshot.state == null}
                   />
-                  <section>
-                    <h2 className="text-xl font-semibold">{system.id} facilities</h2>
+                  <section className="min-w-0">
+                    <h2 className="text-xl font-semibold">
+                      <span className="num">{system.id}</span> facilities
+                    </h2>
                     <NetworkMap system={system} status={status.byAsset} />
                     <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                       {system.facilities.map((f) => {
                         const tone = TONE[status.byFacility[f.id] ?? 'ok']
+                        const selected = f.id === facility?.id
                         return (
                           <button
                             type="button"
                             key={f.id}
                             onClick={() => setSelectedFacilityId(f.id)}
-                            className={`rounded-xl border-2 bg-slate-900 p-5 text-left hover:bg-slate-800 ${
-                              f.id === facility?.id ? 'ring-2 ring-cyan-400' : ''
+                            className={`panel p-4 text-left transition-transform hover:-translate-y-0.5 hover:bg-surface-2 ${
+                              selected ? 'ring-2 ring-data ring-offset-2 ring-offset-ink' : ''
                             }`}
-                            style={{ borderColor: tone.border }}
+                            style={{ borderColor: tone.border, '--tick': tone.border }}
                           >
-                            <div className="flex items-center justify-between">
-                              <h3 className="font-semibold text-cyan-400">{f.id}</h3>
-                              <span className="rounded px-2 py-0.5 text-xs font-semibold" style={{ background: tone.bg, color: tone.text }}>
+                            <div className="flex items-center justify-between gap-2">
+                              <h3 className="num truncate text-base font-semibold text-data">{f.id}</h3>
+                              <span className="tag" style={{ background: tone.bg, color: tone.text }}>
+                                <span className="led" />
                                 {tone.label}
                               </span>
                             </div>
-                            <dl className="mt-4 space-y-2 text-sm">
-                              <div>
-                                <dt className="text-slate-400">Tank</dt>
-                                <dd>
-                                  {status.byAsset[f.tank.id]?.detail ?? '-'} of {f.tank.capacity_bbl.toLocaleString()}{' '}
-                                  {network.meta.units.volume}
-                                </dd>
+                            <dl className="mt-4 grid gap-2 text-sm">
+                              <div className="flex gap-2">
+                                <Icon name="tank" className="mt-0.5 text-faint" />
+                                <div>
+                                  <dt className="eyebrow text-faint">Tank</dt>
+                                  <dd className="num">
+                                    {status.byAsset[f.tank.id]?.detail ?? '-'} of {f.tank.capacity_bbl.toLocaleString()}{' '}
+                                    {network.meta.units.volume}
+                                  </dd>
+                                </div>
                               </div>
-                              <div>
-                                <dt className="text-slate-400">Pump</dt>
-                                <dd>
-                                  {f.pump.id}: {status.byAsset[f.pump.id]?.detail ?? '-'}
-                                </dd>
+                              <div className="flex gap-2">
+                                <Icon name="pump" className="mt-0.5 text-faint" />
+                                <div>
+                                  <dt className="eyebrow text-faint">Pump</dt>
+                                  <dd className="num">
+                                    {f.pump.id}: {status.byAsset[f.pump.id]?.detail ?? '-'}
+                                  </dd>
+                                </div>
                               </div>
-                              <div>
-                                <dt className="text-slate-400">Wells</dt>
-                                <dd>
-                                  {f.wells.length}
-                                  {' ('}
-                                  {f.wells.filter((w) => status.byAsset[w.id]?.tone === 'off').length} shut in)
-                                </dd>
+                              <div className="flex gap-2">
+                                <Icon name="drop" className="mt-0.5 text-faint" />
+                                <div>
+                                  <dt className="eyebrow text-faint">Wells</dt>
+                                  <dd className="num">
+                                    {f.wells.length}
+                                    {' ('}
+                                    {f.wells.filter((w) => status.byAsset[w.id]?.tone === 'off').length} shut in)
+                                  </dd>
+                                </div>
                               </div>
                             </dl>
                           </button>
@@ -579,8 +594,24 @@ function App() {
             )}
           </>
         )}
+        <footer className="num mt-12 border-t border-line pt-4 text-xs text-faint">Nightshift - HackUTD 2026</footer>
       </div>
     </main>
+  )
+}
+
+// Slim strip in the header: replay clock, speed, and a red dot while the replay runs.
+function ShiftClock({ t, speed, playing }) {
+  if (t == null) return null
+  return (
+    <div className="num flex items-center gap-4 text-sm text-muted">
+      <span className="flex items-center gap-2">
+        <span className={`led ${playing ? 'led-live text-crit' : 'led-hollow text-faint'}`} />
+        <span className="text-fg">{fmtTime(t)}</span>
+      </span>
+      <span className="h-4 w-px bg-line-strong" aria-hidden="true" />
+      <span>{speed}x</span>
+    </div>
   )
 }
 

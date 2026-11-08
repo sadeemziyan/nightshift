@@ -19,39 +19,41 @@ function FacilityDetail({
 
   return (
     <section className="mt-8">
-      <h2 className="text-2xl font-semibold">{facility.id}</h2>
+      <h2 className="num text-2xl font-semibold">{facility.id}</h2>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[20rem_1fr]">
-        <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+      <div className="mt-4 grid gap-4 lg:grid-cols-[20rem_minmax(0,1fr)]">
+        <div className="panel p-4">
           {forecastRow ? (
             forecastRow.already_shut_in ? (
               <>
-                <p className="text-sm text-slate-400">Tank status</p>
-                <p className="mt-2 text-3xl font-bold text-slate-300">Already shut in</p>
-                <p className="mt-2 text-sm text-slate-400">The wells are off until the pump is repaired.</p>
+                <p className="eyebrow text-muted">Tank status</p>
+                <p className="mt-2 font-display text-3xl font-semibold text-off">Already shut in</p>
+                <p className="mt-2 text-sm text-muted">The wells are off until the pump is repaired.</p>
               </>
             ) : (
               <>
-                <p className="text-sm text-slate-400">Time until shutdown</p>
-                <p
-                  className={`mt-2 font-mono text-5xl font-bold tabular-nums ${repairFirst ? 'text-emerald-400' : 'text-red-400'}`}
-                  aria-live="off"
-                >
-                  {secondsLeft != null ? fmtCountdown(secondsLeft) : '-'}
-                </p>
+                <p className="eyebrow text-muted">Time until shutdown</p>
+                <div className="readout mt-2 px-4 py-3">
+                  <p
+                    className={`num text-5xl font-bold ${repairFirst ? 'text-ok' : 'text-bad'}`}
+                    aria-live="off"
+                  >
+                    {secondsLeft != null ? fmtCountdown(secondsLeft) : '-'}
+                  </p>
+                </div>
                 {h?.p10 != null && h?.p90 != null && (
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-2 text-sm text-muted">
                     Range {fmtHours(h.p10)} to {fmtHours(h.p90)} from when this was computed
                   </p>
                 )}
                 {forecastRow.trips_at_unix && (
-                  <p className="mt-3 text-sm text-slate-300">Hits {shutdownPct}% at {fmtClock(forecastRow.trips_at_unix)}Z</p>
+                  <p className="mt-4 text-sm text-fg">Hits {shutdownPct}% at {fmtClock(forecastRow.trips_at_unix)}Z</p>
                 )}
-                <p className="mt-1 text-sm text-slate-300">
+                <p className="mt-1 text-sm text-fg">
                   Repair done in {fmtHours(Math.max(0, repairLeft) / 3600)} ({fmtClock(forecastRow.repair_ends_unix)}Z)
                 </p>
                 {repairFirst && (
-                  <p className="mt-3 rounded bg-emerald-500/15 px-3 py-2 text-xs text-emerald-300">
+                  <p className="banner mt-4 border-ok/30 bg-ok/8 text-ok">
                     Repair finishes first, so no shutdown is expected.
                   </p>
                 )}
@@ -59,9 +61,9 @@ function FacilityDetail({
             )
           ) : (
             <>
-              <p className="text-sm text-slate-400">Countdown</p>
-              <p className="mt-2 text-lg text-slate-300">No pump failure at this facility right now.</p>
-              <p className="mt-2 text-xs text-slate-500">A countdown and plans appear here when its pump fails.</p>
+              <p className="eyebrow text-muted">Countdown</p>
+              <p className="mt-2 text-lg text-fg">No pump failure at this facility right now.</p>
+              <p className="mt-2 text-sm text-faint">A countdown and plans appear here when its pump fails.</p>
             </>
           )}
         </div>
@@ -74,12 +76,12 @@ function FacilityDetail({
         />
       </div>
 
-      <div className="mt-6">
+      <div className="mt-4">
         <SensorChart assetId={facility.pump.id} t={snapT} usingMock={usingMock} />
       </div>
 
       <div className="mt-8">
-        <h3 className="mb-3 text-xl font-semibold">What to do</h3>
+        <h3 className="mb-4 text-xl font-semibold">What to do</h3>
         {planHeader}
         {systemPlan ? (
           <div className={planLoading ? 'opacity-60 transition-opacity' : 'transition-opacity'} aria-busy={planLoading}>
@@ -98,7 +100,7 @@ function FacilityDetail({
             ))}
           </div>
         ) : (
-          <p className="rounded-xl border border-slate-800 bg-slate-900 p-5 text-sm text-slate-400">
+          <p className="panel p-4 text-sm text-muted">
             Plans appear when a pump in this system fails. Press play, or use Next problem.
           </p>
         )}
