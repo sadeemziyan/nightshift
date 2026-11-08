@@ -134,7 +134,7 @@ function NetworkMap({ system, status = {} }) {
   addNode(system.disposal_site.id, 'Disposal site', COL * 4, disposalY)
 
   return (
-    <div ref={boxRef} className="ns-map screen mt-4 h-[600px] overflow-hidden">
+    <div ref={boxRef} className="ns-map screen mt-4 h-[380px] overflow-hidden sm:h-[600px]">
       <ReactFlow
         key={system.id}
         nodes={nodes}

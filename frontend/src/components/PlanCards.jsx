@@ -82,18 +82,18 @@ function PlanCards({ systemPlan, facilityId, onApprove, approveDisabled, approve
 
   return (
     <div>
-      <div className="readout mb-4 flex flex-wrap gap-x-8 gap-y-4 px-4 py-3 text-sm">
+      <div className="readout mb-4 grid gap-4 px-4 py-3 text-sm sm:flex sm:flex-wrap sm:gap-x-8">
         <div>
           <p className="eyebrow text-muted">Do nothing</p>
           <p className="num mt-1 text-2xl font-bold text-bad">{usd(systemPlan.do_nothing_cost_usd)}</p>
         </div>
         {sep && (
-          <div className="border-l border-line pl-8">
+          <div className="sm:border-l sm:border-line sm:pl-8">
             <p className="eyebrow text-muted">Planning each tank separately</p>
             <p className="num mt-1 text-2xl font-bold text-warn">{usd(sep.cost_usd)}</p>
           </div>
         )}
-        <div className="border-l border-line pl-8">
+        <div className="sm:border-l sm:border-line sm:pl-8">
           <p className="eyebrow text-muted">Our system plan</p>
           <p className="num mt-1 text-2xl font-bold text-ok">{usd(best.cost_usd)}</p>
         </div>

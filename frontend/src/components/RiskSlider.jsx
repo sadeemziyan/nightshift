@@ -25,7 +25,7 @@ function RiskSlider({ risk, onChange, disabled }) {
         style={{ '--fill': `${(index / last) * 100}%` }}
       />
       {/* labelled ticks, inset by half the thumb width so each sits under its stop */}
-      <div className="relative mx-[6px] mt-1 h-8">
+      <div className="relative mx-[6px] mt-1 h-12 sm:h-8">
         {LABELS.map((l, i) => {
           const shift = i === 0 ? '0' : i === last ? '-100%' : '-50%'
           return (
@@ -36,7 +36,7 @@ function RiskSlider({ risk, onChange, disabled }) {
               }`}
               style={{ left: `${(i / last) * 100}%`, transform: `translateX(${shift})` }}
             >
-              <span className={`h-1.5 w-px ${i === index ? 'bg-data' : 'bg-line-strong'}`} />
+              <span className={`w-px ${i % 2 ? 'h-5 sm:h-1.5' : 'h-1.5'} ${i === index ? 'bg-data' : 'bg-line-strong'}`} />
               <span className="mt-1">{l}</span>
             </span>
           )

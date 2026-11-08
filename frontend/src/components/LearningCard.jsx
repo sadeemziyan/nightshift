@@ -16,13 +16,13 @@ function LearningCard({ state }) {
   const ready = m.status === 'ready'
   return (
     <div className={`banner mt-4 ${ready ? 'border-ok/40 bg-ok/8 text-ok' : 'border-warn/40 bg-warn/8 text-warn'}`} role="status">
-      <span className="led" aria-hidden="true" />
+      <span className="led mt-1.5 self-start" aria-hidden="true" />
       {ready ? (
-        <p className="font-semibold">
+        <p className="min-w-0 flex-1 font-semibold">
           Learning complete: <span className="num">{m.pumps_calibrated}</span> pumps calibrated in <span className="num">{m.seconds}</span> s
         </p>
       ) : (
-        <p className="font-semibold">Models are not available, so Nightshift is running on rules alone.</p>
+        <p className="min-w-0 flex-1 font-semibold">Models are not available, so Nightshift is running on rules alone.</p>
       )}
     </div>
   )
