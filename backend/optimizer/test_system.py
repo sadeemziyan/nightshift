@@ -91,6 +91,19 @@ def test_already_shut_in_tank_is_priced_not_planned():
     assert round(out["plans"][0]["cost_usd"]) == 3300 * 6
 
 
+def test_separate_planning_is_never_cheaper_than_system_plan():
+    for fleet in (0, 1, 2, 3):
+        out = best(fleet)
+        sep = out["planned_separately"]
+        assert sep["trucks_used"] <= fleet
+        assert sep["cost_usd"] >= out["plans"][0]["cost_usd"] - 0.01
+        assert sep["extra_cost_vs_system_plan_usd"] >= -0.01
+
+
+def test_one_tank_has_no_separate_comparison():
+    assert best(2, slice(0, 1))["planned_separately"] is None
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:

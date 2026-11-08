@@ -71,6 +71,26 @@ def _candidates(problem, step_min: int) -> list:
     return keep
 
 
+def _one_at_a_time(facilities: list, fleet: int) -> dict:
+    """What a console that plans each tank separately would do.
+
+    Tanks are handled most urgent first (the order of `facilities`). Each takes its cheapest
+    plan from the trucks still left, so an early tank can grab trucks a later tank needed.
+    """
+    left, total, trucks_used, parts = fleet, 0.0, 0, []
+    wanted = 0
+    for fac in facilities:
+        wanted += min(fac["cands"], key=lambda c: (c["cost"], c["trips"]))["trucks"]
+        options = [c for c in fac["cands"] if c["trucks"] <= left]
+        pick = min(options, key=lambda c: (c["cost"], c["trips"]))
+        left -= pick["trucks"]
+        trucks_used += pick["trucks"]
+        total += pick["cost"]
+        parts.append(f"{fac['row']['facility_id']}: {_plan_summary(pick)}")
+    return {"cost_usd": round(total, 2), "summary": "; ".join(parts),
+            "trucks_used": trucks_used, "trucks_wanted_if_independent": wanted}
+
+
 def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
                 *, step_min: int = 1) -> dict:
     """Plans for every failing tank of one system, planned together.
@@ -163,11 +183,17 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
             "per_facility": per_fac,
         })
 
+    separate = None
+    if len(facilities) > 1 and plans:
+        separate = _one_at_a_time(facilities, fleet)
+        separate["extra_cost_vs_system_plan_usd"] = round(separate["cost_usd"] - plans[0]["cost_usd"], 2)
+
     return {
         "system_id": system_id,
         "fleet_size": fleet,
         "event_ids": [f["row"]["event_id"] for f in facilities],
         "do_nothing_cost_usd": round(do_nothing_cost, 2),
+        "planned_separately": separate,
         "plans": plans,
     }
 
