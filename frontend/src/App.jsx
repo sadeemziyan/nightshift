@@ -1,23 +1,27 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import AlertPanel from './components/AlertPanel'
+import FacilityDetail from './components/FacilityDetail'
 import NetworkMap from './components/NetworkMap'
-import SensorChart from './components/SensorChart'
 import * as api from './api'
 import { mock, MOCK_T } from './mock'
 import { TONE, buildStatus, fmtTime } from './status'
 
 const STEP_S = 300 // telemetry is one reading every 5 minutes
+const NO_PLANS = { forecasts: [], plan: null }
 
 function App() {
   const [datasets, setDatasets] = useState([])
   const [datasetId, setDatasetId] = useState('')
   const [network, setNetwork] = useState(null)
   const [snapshot, setSnapshot] = useState({ state: null, alerts: [] })
+  const [decision, setDecision] = useState(NO_PLANS) // /forecast rows and /plan, both at time t
+  const [planLoading, setPlanLoading] = useState(false)
   const [t, setT] = useState(null)
   const [range, setRange] = useState({ min: 0, max: 0 })
   const [usingMock, setUsingMock] = useState(false)
   const [notice, setNotice] = useState('Connecting to the backend...')
   const [selectedSystemId, setSelectedSystemId] = useState('')
-  const [chartFacilityId, setChartFacilityId] = useState('')
+  const [selectedFacilityId, setSelectedFacilityId] = useState('')
 
   const fallToMock = useCallback((reason) => {
     setUsingMock(true)
@@ -26,6 +30,7 @@ function App() {
     setDatasetId(mock.load.dataset)
     setNetwork(mock.network)
     setSnapshot({ state: mock.state, alerts: mock.alerts.alerts })
+    setDecision({ forecasts: mock.forecast.forecasts, plan: mock.plan })
     setRange({ min: MOCK_T, max: MOCK_T })
     setT(MOCK_T)
   }, [])
@@ -48,8 +53,9 @@ function App() {
         setDatasetId(id)
         setNetwork(net)
         setSnapshot({ state: null, alerts: [] })
+        setDecision(NO_PLANS)
         setSelectedSystemId(net.systems[0]?.id ?? '')
-        setChartFacilityId('')
+        setSelectedFacilityId('')
         setRange({ min: start, max: info.now_unix })
         setT(info.now_unix)
         setNotice('')
@@ -90,6 +96,21 @@ function App() {
         if (cancelled) return
         setSnapshot({ state, alerts: alertsRes.alerts })
         setNotice('')
+        // Countdowns and plans only exist while a pump is down.
+        const pumpDown = alertsRes.alerts.some((a) => a.category === 'pump_failure' && a.status === 'ongoing')
+        if (!pumpDown) {
+          setDecision(NO_PLANS)
+          return
+        }
+        setPlanLoading(true)
+        try {
+          const [forecast, plan] = await Promise.all([api.getForecast(t), api.getPlan(t)])
+          if (!cancelled) setDecision({ forecasts: forecast.forecasts, plan })
+        } catch {
+          if (!cancelled) setDecision(NO_PLANS)
+        } finally {
+          if (!cancelled) setPlanLoading(false)
+        }
       } catch (err) {
         if (!cancelled) setNotice(`Could not read data at this time: ${err.message}`)
       }
@@ -107,12 +128,22 @@ function App() {
 
   const system = network?.systems.find((s) => s.id === selectedSystemId) ?? network?.systems[0]
   const active = snapshot.alerts.filter((a) => a.status === 'ongoing')
-  const chartFacility =
-    system?.facilities.find((f) => f.id === chartFacilityId) ??
+
+  // The facility shown in detail: the one picked, else the first with a pump failure, else the first.
+  const facility =
+    system?.facilities.find((f) => f.id === selectedFacilityId) ??
     system?.facilities.find((f) =>
       active.some((a) => a.category === 'pump_failure' && a.facility_id === f.id)
     ) ??
     system?.facilities[0]
+
+  const forecastRow = decision.forecasts.find((f) => f.facility_id === facility?.id)
+  const systemPlan = decision.plan?.systems.find((s) => s.system_id === system?.id)
+
+  const pickAlert = (alert) => {
+    setSelectedSystemId(alert.system_id)
+    setSelectedFacilityId(alert.facility_id)
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 p-8 text-slate-100">
@@ -162,7 +193,7 @@ function App() {
               value={system?.id ?? ''}
               onChange={(e) => {
                 setSelectedSystemId(e.target.value)
-                setChartFacilityId('')
+                setSelectedFacilityId('')
               }}
               className="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3"
             >
@@ -207,81 +238,77 @@ function App() {
 
       {system ? (
         <>
-          <section className="mt-6">
-            <h2 className="text-xl font-semibold">{system.id} facilities</h2>
-            <NetworkMap system={system} status={status.byAsset} />
-            <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {system.facilities.map((facility) => {
-                const tone = TONE[status.byFacility[facility.id] ?? 'ok']
-                const alerts = active.filter((a) => a.facility_id === facility.id)
-                return (
-                  <article
-                    key={facility.id}
-                    className="rounded-xl border-2 bg-slate-900 p-5"
-                    style={{ borderColor: tone.border }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-cyan-400">{facility.id}</h3>
-                      <span
-                        className="rounded px-2 py-0.5 text-xs font-semibold"
-                        style={{ background: tone.bg, color: tone.text }}
-                      >
-                        {tone.label}
-                      </span>
-                    </div>
-                    <dl className="mt-4 space-y-2 text-sm">
-                      <div>
-                        <dt className="text-slate-400">Tank</dt>
-                        <dd>
-                          {status.byAsset[facility.tank.id]?.detail ?? '-'} of{' '}
-                          {facility.tank.capacity_bbl.toLocaleString()} {network.meta.units.volume}
-                        </dd>
+          <div className="mt-6 grid gap-6 xl:grid-cols-[24rem_1fr]">
+            <AlertPanel
+              alerts={snapshot.alerts}
+              selectedFacilityId={facility?.id}
+              onSelect={pickAlert}
+            />
+            <section>
+              <h2 className="text-xl font-semibold">{system.id} facilities</h2>
+              <NetworkMap system={system} status={status.byAsset} />
+              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {system.facilities.map((f) => {
+                  const tone = TONE[status.byFacility[f.id] ?? 'ok']
+                  return (
+                    <button
+                      type="button"
+                      key={f.id}
+                      onClick={() => setSelectedFacilityId(f.id)}
+                      className={`rounded-xl border-2 bg-slate-900 p-5 text-left hover:bg-slate-800 ${
+                        f.id === facility?.id ? 'ring-2 ring-cyan-400' : ''
+                      }`}
+                      style={{ borderColor: tone.border }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-cyan-400">{f.id}</h3>
+                        <span
+                          className="rounded px-2 py-0.5 text-xs font-semibold"
+                          style={{ background: tone.bg, color: tone.text }}
+                        >
+                          {tone.label}
+                        </span>
                       </div>
-                      <div>
-                        <dt className="text-slate-400">Pump</dt>
-                        <dd>
-                          {facility.pump.id}: {status.byAsset[facility.pump.id]?.detail ?? '-'}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="text-slate-400">Wells</dt>
-                        <dd>
-                          {facility.wells.length}
-                          {' ('}
-                          {facility.wells.filter((w) => status.byAsset[w.id]?.tone === 'off').length} shut in)
-                        </dd>
-                      </div>
-                    </dl>
-                    {alerts.map((a) => (
-                      <p key={a.event_id} className="mt-3 rounded bg-slate-800 px-3 py-2 text-xs text-slate-200">
-                        {a.category.replace('_', ' ')}: {a.evidence?.[0] ?? a.asset_id}
-                      </p>
-                    ))}
-                  </article>
-                )
-              })}
-            </div>
-          </section>
-
-          {chartFacility && (
-            <section className="mt-8">
-              <div className="mb-3 flex flex-wrap items-center gap-4">
-                <h2 className="text-xl font-semibold">Pump behavior</h2>
-                <select
-                  aria-label="Facility for the chart"
-                  value={chartFacility.id}
-                  onChange={(e) => setChartFacilityId(e.target.value)}
-                  className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm"
-                >
-                  {system.facilities.map((f) => (
-                    <option key={f.id} value={f.id}>
-                      {f.pump.id}
-                    </option>
-                  ))}
-                </select>
+                      <dl className="mt-4 space-y-2 text-sm">
+                        <div>
+                          <dt className="text-slate-400">Tank</dt>
+                          <dd>
+                            {status.byAsset[f.tank.id]?.detail ?? '-'} of{' '}
+                            {f.tank.capacity_bbl.toLocaleString()} {network.meta.units.volume}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-slate-400">Pump</dt>
+                          <dd>
+                            {f.pump.id}: {status.byAsset[f.pump.id]?.detail ?? '-'}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-slate-400">Wells</dt>
+                          <dd>
+                            {f.wells.length}
+                            {' ('}
+                            {f.wells.filter((w) => status.byAsset[w.id]?.tone === 'off').length} shut in)
+                          </dd>
+                        </div>
+                      </dl>
+                    </button>
+                  )
+                })}
               </div>
-              <SensorChart assetId={chartFacility.pump.id} t={t} usingMock={usingMock} />
             </section>
+          </div>
+
+          {facility && (
+            <FacilityDetail
+              facility={facility}
+              network={network}
+              t={t}
+              forecastRow={forecastRow}
+              systemPlan={systemPlan}
+              planLoading={planLoading}
+              usingMock={usingMock}
+            />
           )}
         </>
       ) : (
