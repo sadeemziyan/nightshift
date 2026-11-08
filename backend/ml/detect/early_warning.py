@@ -89,26 +89,25 @@ def false_warnings(ds, all_events, threshold, every_h: float = 2.0) -> dict:
 
 
 def plot(cv: list[dict], out: Path):
+    """Wear only. A leak is abrupt (the rules alert within about 30 minutes), so its curve would be flat at the top and
+    would not show confidence building; wear drifts slowly, which is where an early warning matters."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    colors = {"pipeline_leak": "#1f77b4", "pump_degradation": "#d95f02"}
-    names = {"pipeline_leak": "pipeline leak", "pump_degradation": "pump wearing out"}
+    series = [c["points"] for c in cv if c["category"] == "pump_degradation" and c["points"]]
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    for cat in SLOW:
-        series = [c["points"] for c in cv if c["category"] == cat and c["points"]]
-        for pts in series:
-            ax.plot([p["hours"] for p in pts], [p["m3_probability"] for p in pts], color=colors[cat], alpha=0.18, lw=1)
-        hours = sorted({p["hours"] for pts in series for p in pts})
-        mean = [np.mean([p["m3_probability"] for pts in series for p in pts if p["hours"] == h]) for h in hours]
-        ax.plot(hours, mean, color=colors[cat], lw=2.5, label=f"{names[cat]} (average of {len(series)})")
+    for pts in series:
+        ax.plot([p["hours"] for p in pts], [p["m3_probability"] for p in pts], color="#d95f02", alpha=0.22, lw=1)
+    hours = sorted({p["hours"] for pts in series for p in pts})
+    mean = [np.mean([p["m3_probability"] for pts in series for p in pts if p["hours"] == h]) for h in hours]
+    ax.plot(hours, mean, color="#d95f02", lw=2.5, label=f"average of {len(series)} worn pumps (thin lines: each pump)")
     ax.axhline(0.8, color="#7f7f7f", ls=":", lw=1)
     ax.text(0.2, 0.82, "early-warning level", color="#7f7f7f", fontsize=8)
-    ax.set_xlabel("hours since the problem started")
+    ax.set_xlabel("hours since the pump started wearing out")
     ax.set_ylabel("how sure the classifier is (probability)")
     ax.set_ylim(0, 1.02)
-    ax.set_title("Confidence rises as the evidence builds")
+    ax.set_title("A wearing pump: confidence climbs as the evidence builds")
     ax.grid(alpha=0.25)
     ax.legend(loc="lower right", fontsize=9)
     fig.tight_layout()

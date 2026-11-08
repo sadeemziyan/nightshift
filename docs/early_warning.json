@@ -1,19 +1,19 @@
 {
-  "generated_unix": 1794119519,
+  "generated_unix": 1794119926,
   "dataset": "full_week",
   "threshold": 0.8,
   "reference": "problem start and alert time come from the sensor-only rule detector, not the answer key",
   "summary": {
     "events": 10,
-    "warned_before_rule_alert": 5,
-    "mean_minutes_earlier": 119.2,
+    "warned_before_rule_alert": 4,
+    "mean_minutes_earlier": 116.4,
     "pipeline_leak": {
       "events": 5,
       "mean_minutes_earlier": null
     },
     "pump_degradation": {
       "events": 5,
-      "mean_minutes_earlier": 119.2
+      "mean_minutes_earlier": 116.4
     }
   },
   "lead_times": [
@@ -28,15 +28,15 @@
       "event_id": "S5_PUMP_A@1791199190",
       "category": "pump_degradation",
       "rule_alert_after_onset_min": 250.2,
-      "m3_warning_after_onset_min": 210.0,
-      "warned_first_by_min": 40.2
+      "m3_warning_after_onset_min": null,
+      "warned_first_by_min": null
     },
     {
       "event_id": "S2_PUMP_A@1791230534",
       "category": "pump_degradation",
       "rule_alert_after_onset_min": 257.8,
-      "m3_warning_after_onset_min": 150.0,
-      "warned_first_by_min": 107.8
+      "m3_warning_after_onset_min": 240.0,
+      "warned_first_by_min": 17.8
     },
     {
       "event_id": "S4_PIPELINE_A@1791251700",
@@ -90,38 +90,22 @@
   ],
   "false_warnings": {
     "times_checked": 78,
-    "warnings_raised": 28,
-    "false_warnings": 13,
+    "warnings_raised": 15,
+    "false_warnings": 1,
     "examples": [
-      {
-        "t": 1791201600,
-        "facility_id": "S2_FACILITY_B",
-        "category": "pump_degradation",
-        "probability": 0.866
-      },
-      {
-        "t": 1791208800,
-        "facility_id": "S5_FACILITY_B",
-        "category": "pipeline_leak",
-        "probability": 0.943
-      },
-      {
-        "t": 1791230400,
-        "facility_id": "S4_FACILITY_D",
-        "category": "pipeline_leak",
-        "probability": 0.887
-      },
-      {
-        "t": 1791230400,
-        "facility_id": "S2_FACILITY_B",
-        "category": "pump_degradation",
-        "probability": 0.83
-      },
       {
         "t": 1791266400,
         "facility_id": "S3_FACILITY_A",
         "category": "pipeline_leak",
-        "probability": 0.876
+        "probability": 0.863
+      }
+    ],
+    "all": [
+      {
+        "t": 1791266400,
+        "facility_id": "S3_FACILITY_A",
+        "category": "pipeline_leak",
+        "probability": 0.863
       }
     ]
   },
@@ -132,22 +116,22 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.996,
+          "m3_probability": 0.994,
           "drift_score": 0.457
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.994,
           "drift_score": 0.587
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.995,
+          "m3_probability": 0.996,
           "drift_score": 0.664
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.995,
           "drift_score": 0.728
         },
         {
@@ -167,17 +151,17 @@
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.995,
+          "m3_probability": 0.997,
           "drift_score": 0.913
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.996,
+          "m3_probability": 0.995,
           "drift_score": 0.946
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.995,
+          "m3_probability": 0.992,
           "drift_score": 0.976
         },
         {
@@ -187,7 +171,7 @@
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.996,
           "drift_score": 1.0
         },
         {
@@ -197,17 +181,17 @@
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 1.0
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 1.0
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.995,
+          "m3_probability": 0.996,
           "drift_score": 1.0
         }
       ]
@@ -218,47 +202,47 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.108,
+          "m3_probability": 0.262,
           "drift_score": 0.09
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.091,
+          "m3_probability": 0.223,
           "drift_score": 0.09
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.091,
+          "m3_probability": 0.223,
           "drift_score": 0.09
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.082,
+          "m3_probability": 0.19,
           "drift_score": 0.09
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.153,
+          "m3_probability": 0.301,
           "drift_score": 0.09
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.397,
+          "m3_probability": 0.498,
           "drift_score": 0.09
         },
         {
           "hours": 3.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.995,
           "drift_score": 0.21
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.347
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.996,
           "drift_score": 0.467
         },
         {
@@ -273,17 +257,17 @@
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.999,
           "drift_score": 0.633
         },
         {
           "hours": 6.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 0.676
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.72
         },
         {
@@ -293,7 +277,7 @@
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.999,
           "drift_score": 0.793
         }
       ]
@@ -304,32 +288,32 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.01,
-          "drift_score": 0.062
-        },
-        {
-          "hours": 1.0,
           "m3_probability": 0.012,
           "drift_score": 0.062
         },
         {
+          "hours": 1.0,
+          "m3_probability": 0.015,
+          "drift_score": 0.062
+        },
+        {
           "hours": 1.5,
-          "m3_probability": 0.006,
+          "m3_probability": 0.01,
           "drift_score": 0.062
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.044,
+          "m3_probability": 0.025,
           "drift_score": 0.069
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.809,
+          "m3_probability": 0.752,
           "drift_score": 0.169
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.994,
+          "m3_probability": 0.996,
           "drift_score": 0.228
         },
         {
@@ -339,12 +323,12 @@
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.999,
           "drift_score": 0.386
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 0.482
         },
         {
@@ -359,7 +343,7 @@
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.999,
           "drift_score": 0.641
         },
         {
@@ -369,17 +353,17 @@
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.992,
           "drift_score": 0.723
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.994,
+          "m3_probability": 0.993,
           "drift_score": 0.763
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.994,
+          "m3_probability": 0.991,
           "drift_score": 0.798
         }
       ]
@@ -390,7 +374,7 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.996,
+          "m3_probability": 0.986,
           "drift_score": 0.408
         },
         {
@@ -400,7 +384,7 @@
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.992,
           "drift_score": 0.636
         },
         {
@@ -410,22 +394,22 @@
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.76
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 0.808
         },
         {
           "hours": 3.5,
-          "m3_probability": 0.99,
+          "m3_probability": 0.989,
           "drift_score": 0.839
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.992,
+          "m3_probability": 0.991,
           "drift_score": 0.839
         },
         {
@@ -435,17 +419,17 @@
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.992,
+          "m3_probability": 0.993,
           "drift_score": 0.839
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.992,
+          "m3_probability": 0.991,
           "drift_score": 0.839
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.992,
+          "m3_probability": 0.989,
           "drift_score": 0.839
         },
         {
@@ -460,12 +444,12 @@
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.992,
+          "m3_probability": 0.989,
           "drift_score": 0.839
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.884
         }
       ]
@@ -476,32 +460,32 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.165,
+          "m3_probability": 0.186,
           "drift_score": 0.113
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.211,
+          "m3_probability": 0.342,
           "drift_score": 0.113
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.34,
+          "m3_probability": 0.586,
           "drift_score": 0.113
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.993,
+          "m3_probability": 0.995,
           "drift_score": 0.139
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.969,
+          "m3_probability": 0.995,
           "drift_score": 0.186
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.979,
+          "m3_probability": 0.951,
           "drift_score": 0.235
         },
         {
@@ -511,27 +495,27 @@
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.997,
           "drift_score": 0.422
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.993,
+          "m3_probability": 0.996,
           "drift_score": 0.477
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 0.54
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 0.595
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.996,
           "drift_score": 0.645
         },
         {
@@ -546,12 +530,12 @@
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.748
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.989,
+          "m3_probability": 0.99,
           "drift_score": 0.78
         }
       ]
@@ -562,22 +546,22 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.031,
+          "m3_probability": 0.055,
           "drift_score": 0.069
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.041,
+          "m3_probability": 0.045,
           "drift_score": 0.069
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.509,
+          "m3_probability": 0.792,
           "drift_score": 0.069
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.184
         },
         {
@@ -587,7 +571,7 @@
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 0.295
         },
         {
@@ -597,7 +581,7 @@
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 0.413
         },
         {
@@ -607,12 +591,12 @@
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.995,
+          "m3_probability": 0.99,
           "drift_score": 0.542
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.996,
+          "m3_probability": 0.991,
           "drift_score": 0.591
         },
         {
@@ -632,12 +616,12 @@
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.994,
+          "m3_probability": 0.982,
           "drift_score": 0.72
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.993,
+          "m3_probability": 0.982,
           "drift_score": 0.72
         }
       ]
@@ -648,42 +632,42 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.028,
+          "m3_probability": 0.058,
           "drift_score": 0.102
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.029,
+          "m3_probability": 0.042,
           "drift_score": 0.102
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.027,
+          "m3_probability": 0.067,
           "drift_score": 0.102
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.03,
+          "m3_probability": 0.062,
           "drift_score": 0.102
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.053,
+          "m3_probability": 0.054,
           "drift_score": 0.102
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.994,
+          "m3_probability": 0.996,
           "drift_score": 0.257
         },
         {
           "hours": 3.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 0.379
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 0.429
         },
         {
@@ -693,22 +677,22 @@
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 0.555
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 0.605
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.998,
           "drift_score": 0.657
         },
         {
           "hours": 6.5,
-          "m3_probability": 0.993,
+          "m3_probability": 0.997,
           "drift_score": 0.695
         },
         {
@@ -734,22 +718,22 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.992,
+          "m3_probability": 0.994,
           "drift_score": 0.448
         },
         {
           "hours": 1.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.996,
           "drift_score": 0.581
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.658
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.723
         },
         {
@@ -759,22 +743,22 @@
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.997,
           "drift_score": 0.824
         },
         {
           "hours": 3.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.866
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.994,
+          "m3_probability": 0.992,
           "drift_score": 0.903
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.995,
+          "m3_probability": 0.997,
           "drift_score": 0.935
         },
         {
@@ -784,32 +768,32 @@
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.995,
+          "m3_probability": 0.996,
           "drift_score": 0.996
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 1.0
         },
         {
           "hours": 6.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 1.0
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 1.0
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 1.0
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 1.0
         }
       ]
@@ -820,7 +804,7 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.987,
+          "m3_probability": 0.983,
           "drift_score": 0.404
         },
         {
@@ -830,22 +814,22 @@
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.995,
+          "m3_probability": 0.992,
           "drift_score": 0.63
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.995,
           "drift_score": 0.698
         },
         {
           "hours": 2.5,
-          "m3_probability": 0.997,
+          "m3_probability": 0.995,
           "drift_score": 0.759
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.997,
           "drift_score": 0.808
         },
         {
@@ -855,47 +839,47 @@
         },
         {
           "hours": 4.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.894
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.996,
+          "m3_probability": 0.997,
           "drift_score": 0.929
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 0.933
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.994,
           "drift_score": 0.933
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.991,
           "drift_score": 0.933
         },
         {
           "hours": 6.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.933
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.933
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.933
         },
         {
           "hours": 8.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 0.933
         }
       ]
@@ -906,7 +890,7 @@
       "points": [
         {
           "hours": 0.5,
-          "m3_probability": 0.992,
+          "m3_probability": 0.991,
           "drift_score": 0.427
         },
         {
@@ -916,12 +900,12 @@
         },
         {
           "hours": 1.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.997,
           "drift_score": 0.626
         },
         {
           "hours": 2.0,
-          "m3_probability": 0.996,
+          "m3_probability": 0.997,
           "drift_score": 0.695
         },
         {
@@ -931,12 +915,12 @@
         },
         {
           "hours": 3.0,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.806
         },
         {
           "hours": 3.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.851
         },
         {
@@ -946,22 +930,22 @@
         },
         {
           "hours": 4.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.996,
           "drift_score": 0.924
         },
         {
           "hours": 5.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.995,
           "drift_score": 0.958
         },
         {
           "hours": 5.5,
-          "m3_probability": 0.999,
+          "m3_probability": 0.998,
           "drift_score": 0.989
         },
         {
           "hours": 6.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.996,
           "drift_score": 1.0
         },
         {
@@ -971,12 +955,12 @@
         },
         {
           "hours": 7.0,
-          "m3_probability": 0.997,
+          "m3_probability": 0.998,
           "drift_score": 1.0
         },
         {
           "hours": 7.5,
-          "m3_probability": 0.998,
+          "m3_probability": 0.997,
           "drift_score": 1.0
         },
         {

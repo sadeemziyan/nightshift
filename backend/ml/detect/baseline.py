@@ -65,15 +65,25 @@ def _raw_frame(ds: Dataset, facility_id: str, t: int) -> pd.DataFrame:
     }, axis=1).dropna()
 
 
-def expected_running(level: np.ndarray, start_pct: float, stop_pct: float, initial: bool = False) -> np.ndarray:
-    """The pump's state if it followed its setpoints: starts at start_pct, stops at stop_pct, keeps state between."""
+def expected_running(level: np.ndarray, start_pct: float, stop_pct: float, initial: bool = False,
+                     status: np.ndarray | None = None) -> np.ndarray:
+    """The pump's state if it followed its setpoints: at or above start_pct it should run, at or below stop_pct it should not.
+
+    Between the two levels it keeps its state. Without `status` that state is tracked from the level alone, which gets stuck
+    whenever a noisy level reading skips the exact start or stop level (a pump that starts at a reading of 69.8 against a
+    start level of 70 then looked "wrong" for a whole cycle). With `status`, a pump that is observed running (1) or stopped (0)
+    between the two levels is taken as being in its expected state, and a fault (2) keeps the previous expectation, so a
+    pump that stalls above its start level is still reported as one that should be running."""
     out = np.empty(len(level), dtype=bool)
     state = initial
+    st = None if status is None else np.asarray(status)
     for i, lv in enumerate(level):
         if lv >= start_pct:
             state = True
         elif lv <= stop_pct:
             state = False
+        elif st is not None and st[i] in (0, 1):
+            state = bool(st[i] == 1)
         out[i] = state
     return out
 
@@ -130,7 +140,7 @@ def residuals(ds: Dataset, facility_id: str, t: int | None = None, models: dict 
     if raw.empty:
         return raw
     exp_on = expected_running(raw["level"].to_numpy(), pump["start_level_pct"], pump["stop_level_pct"],
-                              initial=bool(raw["status"].iloc[0] == 1))
+                              initial=bool(raw["status"].iloc[0] == 1), status=raw["status"].to_numpy())
     out = raw.copy()
     out["expected_on"] = exp_on
     for k in SENSORS:

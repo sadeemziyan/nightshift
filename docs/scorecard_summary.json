@@ -1,5 +1,5 @@
 {
-  "generated_unix": 1794118900,
+  "generated_unix": 1794119974,
   "detector": "rules + M1/M2 + M3 (detect_with_m3)",
   "folders": {
     "full_week": {
@@ -159,7 +159,7 @@
       },
       {
         "held_out_system": "S2",
-        "precision": 0.988,
+        "precision": 1.0,
         "recall": 1.0,
         "mean_minutes_late": 54.0,
         "events": 5,
@@ -192,7 +192,7 @@
       },
       {
         "held_out_system": "S5",
-        "precision": 1.0,
+        "precision": 0.986,
         "recall": 1.0,
         "mean_minutes_late": 60.0,
         "events": 4,
