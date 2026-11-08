@@ -3,8 +3,35 @@ import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Too
 import * as api from '../api'
 import { mock } from '../mock'
 import { fmtClock } from '../status'
+import { AXIS, C, GRID, TOOLTIP, refLabel } from '../theme'
+import { ChartCard, SampleBadge } from './BaselineCharts'
 
 const HOURS_BACK = 12
+
+// Vertical tank gauge: 0-100% with a tick every 10%, marks at warning and shutdown, filled to the latest level.
+function TankGauge({ level, warningPct, shutdownPct }) {
+  const pct = Math.max(0, Math.min(100, level ?? 0))
+  const color =
+    shutdownPct != null && pct >= shutdownPct ? C.bad : warningPct != null && pct >= warningPct ? C.warn : C.data
+  return (
+    <div className="flex w-14 flex-none flex-col items-center gap-2" aria-hidden="true">
+      <span className="num text-sm font-semibold text-fg">{level == null ? '-' : `${level.toFixed(1)}%`}</span>
+      <div className="relative w-full flex-1">
+        <div className="absolute inset-y-0 left-1 w-7 overflow-hidden rounded-[2px] border border-line-strong bg-ink">
+          <div className="absolute inset-x-0 bottom-0" style={{ height: `${pct}%`, background: color, opacity: 0.85 }} />
+        </div>
+        {/* tick scale on the right */}
+        <div
+          className="absolute inset-y-0 right-0 w-3"
+          style={{ background: `repeating-linear-gradient(to top, ${C.lineStrong} 0 1px, transparent 1px 10%)` }}
+        />
+        <div className="absolute right-0 bottom-1/2 h-px w-4 bg-faint" />
+        {warningPct != null && <div className="absolute left-0 right-0 h-0.5 bg-warn" style={{ bottom: `${warningPct}%` }} />}
+        {shutdownPct != null && <div className="absolute left-0 right-0 h-0.5 bg-bad" style={{ bottom: `${shutdownPct}%` }} />}
+      </div>
+    </div>
+  )
+}
 
 // Tank level over the last 12 hours with the shutdown line drawn on it.
 function TankChart({ tankId, t, shutdownPct, warningPct, usingMock }) {
@@ -30,40 +57,43 @@ function TankChart({ tankId, t, shutdownPct, warningPct, usingMock }) {
     }
   }, [tankId, t, usingMock])
 
-  if (!result) return <p className="text-sm text-slate-400">Loading chart...</p>
+  if (!result) return <p className="text-sm text-muted">Loading chart...</p>
   const { data, source } = result
   const rows = data.points.map(([ts, level]) => ({ ts, level }))
   const top = shutdownPct ?? 100
+  const latest = rows.length ? rows[rows.length - 1].level : null
 
   return (
-    <div>
-      <p className="mb-2 text-sm text-slate-400">
-        {data.asset_id} level (%), last {HOURS_BACK} hours.
-        {source === 'mock' && (
-          <span className="ml-2 rounded bg-amber-500/20 px-2 py-0.5 text-amber-300">sample data</span>
-        )}
-      </p>
-      <div className="h-72 rounded-xl border border-slate-800 bg-slate-900 p-3">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={rows}>
-            <CartesianGrid stroke="#1e293b" />
-            <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} stroke="#64748b" />
-            <YAxis
-              stroke="#64748b"
-              domain={[(min) => Math.max(0, Math.floor(min - 3)), (max) => Math.ceil(Math.max(max, top) + 3)]}
-            />
-            <Tooltip labelFormatter={fmtClock} contentStyle={{ background: '#0f172a', border: '1px solid #334155' }} />
-            {warningPct != null && (
-              <ReferenceLine y={warningPct} stroke="#eab308" strokeDasharray="4 4" label={{ value: `warning ${warningPct}%`, fill: '#eab308', fontSize: 11, position: 'insideTopLeft' }} />
-            )}
-            {shutdownPct != null && (
-              <ReferenceLine y={shutdownPct} stroke="#ef4444" strokeWidth={2} label={{ value: `SHUTDOWN ${shutdownPct}%`, fill: '#ef4444', fontSize: 11, position: 'insideTopLeft' }} />
-            )}
-            <Line dataKey="level" name="Level %" stroke="#22d3ee" strokeWidth={2} dot={false} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <ChartCard
+      caption={
+        <>
+          <span>
+            <span className="num text-fg">{data.asset_id}</span> level (%), last {HOURS_BACK} hours.
+          </span>
+          {source === 'mock' && <SampleBadge>sample data</SampleBadge>}
+        </>
+      }
+      aside={<TankGauge level={latest} warningPct={warningPct} shutdownPct={shutdownPct} />}
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={rows}>
+          <CartesianGrid {...GRID} />
+          <XAxis dataKey="ts" type="number" domain={['dataMin', 'dataMax']} tickFormatter={fmtClock} {...AXIS} />
+          <YAxis
+            {...AXIS}
+            domain={[(min) => Math.max(0, Math.floor(min - 3)), (max) => Math.ceil(Math.max(max, top) + 3)]}
+          />
+          <Tooltip labelFormatter={fmtClock} {...TOOLTIP} />
+          {warningPct != null && (
+            <ReferenceLine y={warningPct} stroke={C.warn} strokeDasharray="4 4" label={refLabel(`warning ${warningPct}%`, C.warn)} />
+          )}
+          {shutdownPct != null && (
+            <ReferenceLine y={shutdownPct} stroke={C.bad} strokeWidth={2} label={refLabel(`SHUTDOWN ${shutdownPct}%`, C.bad)} />
+          )}
+          <Line dataKey="level" name="Level %" stroke={C.fg} strokeWidth={2} dot={false} isAnimationActive={false} />
+        </LineChart>
+      </ResponsiveContainer>
+    </ChartCard>
   )
 }
 

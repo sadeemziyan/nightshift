@@ -414,3 +414,6 @@ input[type="range"].slider {
 
 /* cyan glow for the running Play button */
 .glow-data { box-shadow: 0 0 0 1px var(--color-data), 0 0 18px rgb(34 211 238 / 0.5); }
+
+/* a disabled primary button goes neutral instead of a washed-out cyan, so its label stays readable */
+.btn-primary:disabled { opacity: 1; background-color: var(--color-surface-2); border-color: var(--color-line-strong); color: var(--color-muted); }
