@@ -1,0 +1,468 @@
+{
+  "generated_unix": 1794117029,
+  "method": "leave-one-system-out",
+  "folds": [
+    {
+      "held_out_system": "S1",
+      "precision": 1.0,
+      "recall": 1.0,
+      "mean_minutes_late": 37.5,
+      "events": 4,
+      "train_rows": {
+        "simulated": 4500,
+        "real": 563
+      }
+    },
+    {
+      "held_out_system": "S2",
+      "precision": 0.988,
+      "recall": 1.0,
+      "mean_minutes_late": 54.0,
+      "events": 5,
+      "train_rows": {
+        "simulated": 4500,
+        "real": 553
+      }
+    },
+    {
+      "held_out_system": "S3",
+      "precision": 1.0,
+      "recall": 1.0,
+      "mean_minutes_late": 60.0,
+      "events": 3,
+      "train_rows": {
+        "simulated": 4500,
+        "real": 598
+      }
+    },
+    {
+      "held_out_system": "S4",
+      "precision": 0.99,
+      "recall": 1.0,
+      "mean_minutes_late": 51.4,
+      "events": 7,
+      "train_rows": {
+        "simulated": 4500,
+        "real": 510
+      }
+    },
+    {
+      "held_out_system": "S5",
+      "precision": 1.0,
+      "recall": 1.0,
+      "mean_minutes_late": 60.0,
+      "events": 4,
+      "train_rows": {
+        "simulated": 4500,
+        "real": 564
+      }
+    }
+  ],
+  "comparison": {
+    "rules": {
+      "recall": 1.0,
+      "mean_minutes_late": 91.3
+    },
+    "models": {
+      "recall": 1.0,
+      "mean_minutes_late": 52.2
+    },
+    "ensemble": {
+      "recall": 1.0,
+      "mean_minutes_late": 52.2
+    }
+  },
+  "calibration_bins": [
+    {
+      "p_mean": 0.472,
+      "observed": 1.0,
+      "n": 1
+    },
+    {
+      "p_mean": 0.609,
+      "observed": 0.84,
+      "n": 25
+    },
+    {
+      "p_mean": 0.786,
+      "observed": 0.936,
+      "n": 47
+    },
+    {
+      "p_mean": 0.912,
+      "observed": 0.927,
+      "n": 137
+    },
+    {
+      "p_mean": 0.989,
+      "observed": 0.994,
+      "n": 487
+    }
+  ],
+  "headline_model": "gradient-boosted trees trained on simulated faults only (never sees the answer key)",
+  "dataset": "full_week",
+  "windows": {
+    "test_total": 697,
+    "normal": 301
+  },
+  "detail": {
+    "rules": {
+      "events": 23,
+      "events_found": 23,
+      "recall": 1.0,
+      "mean_minutes_late": 91.3,
+      "precision": 0.991,
+      "false_alarm_rate": 0.0,
+      "accuracy": 0.905,
+      "macro_f1": 0.897,
+      "by_category": {
+        "pipeline_leak": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 60.0
+        },
+        "pump_degradation": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 282.0
+        },
+        "pump_failure": {
+          "events": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 30.0
+        }
+      },
+      "correct_by_hours_since_onset": [
+        {
+          "hours_since_onset": "0-1",
+          "n": 23,
+          "correct": 0.696
+        },
+        {
+          "hours_since_onset": "1-2",
+          "n": 46,
+          "correct": 0.739
+        },
+        {
+          "hours_since_onset": "2-4",
+          "n": 92,
+          "correct": 0.761
+        },
+        {
+          "hours_since_onset": "4-8",
+          "n": 145,
+          "correct": 0.828
+        },
+        {
+          "hours_since_onset": "8-13",
+          "n": 90,
+          "correct": 1.0
+        }
+      ]
+    },
+    "sim": {
+      "events": 23,
+      "events_found": 23,
+      "recall": 1.0,
+      "mean_minutes_late": 52.2,
+      "precision": 0.995,
+      "false_alarm_rate": 0.0066,
+      "accuracy": 0.971,
+      "macro_f1": 0.97,
+      "by_category": {
+        "pipeline_leak": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 36.0
+        },
+        "pump_degradation": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 126.0
+        },
+        "pump_failure": {
+          "events": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 30.0
+        }
+      },
+      "correct_by_hours_since_onset": [
+        {
+          "hours_since_onset": "0-1",
+          "n": 23,
+          "correct": 0.739
+        },
+        {
+          "hours_since_onset": "1-2",
+          "n": 46,
+          "correct": 0.826
+        },
+        {
+          "hours_since_onset": "2-4",
+          "n": 92,
+          "correct": 0.957
+        },
+        {
+          "hours_since_onset": "4-8",
+          "n": 145,
+          "correct": 1.0
+        },
+        {
+          "hours_since_onset": "8-13",
+          "n": 90,
+          "correct": 1.0
+        }
+      ]
+    },
+    "real": {
+      "events": 23,
+      "events_found": 23,
+      "recall": 1.0,
+      "mean_minutes_late": 53.5,
+      "precision": 1.0,
+      "false_alarm_rate": 0.0,
+      "accuracy": 0.961,
+      "macro_f1": 0.958,
+      "by_category": {
+        "pipeline_leak": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 42.0
+        },
+        "pump_degradation": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 126.0
+        },
+        "pump_failure": {
+          "events": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 30.0
+        }
+      },
+      "correct_by_hours_since_onset": [
+        {
+          "hours_since_onset": "0-1",
+          "n": 23,
+          "correct": 0.739
+        },
+        {
+          "hours_since_onset": "1-2",
+          "n": 46,
+          "correct": 0.804
+        },
+        {
+          "hours_since_onset": "2-4",
+          "n": 92,
+          "correct": 0.924
+        },
+        {
+          "hours_since_onset": "4-8",
+          "n": 145,
+          "correct": 1.0
+        },
+        {
+          "hours_since_onset": "8-13",
+          "n": 90,
+          "correct": 0.944
+        }
+      ]
+    },
+    "sim+real": {
+      "events": 23,
+      "events_found": 23,
+      "recall": 1.0,
+      "mean_minutes_late": 52.2,
+      "precision": 0.987,
+      "false_alarm_rate": 0.0166,
+      "accuracy": 0.967,
+      "macro_f1": 0.965,
+      "by_category": {
+        "pipeline_leak": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 36.0
+        },
+        "pump_degradation": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 126.0
+        },
+        "pump_failure": {
+          "events": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 30.0
+        }
+      },
+      "correct_by_hours_since_onset": [
+        {
+          "hours_since_onset": "0-1",
+          "n": 23,
+          "correct": 0.739
+        },
+        {
+          "hours_since_onset": "1-2",
+          "n": 46,
+          "correct": 0.826
+        },
+        {
+          "hours_since_onset": "2-4",
+          "n": 92,
+          "correct": 0.957
+        },
+        {
+          "hours_since_onset": "4-8",
+          "n": 145,
+          "correct": 1.0
+        },
+        {
+          "hours_since_onset": "8-13",
+          "n": 90,
+          "correct": 1.0
+        }
+      ]
+    },
+    "ensemble": {
+      "events": 23,
+      "events_found": 23,
+      "recall": 1.0,
+      "mean_minutes_late": 52.2,
+      "precision": 0.987,
+      "false_alarm_rate": 0.0066,
+      "accuracy": 0.967,
+      "macro_f1": 0.964,
+      "by_category": {
+        "pipeline_leak": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 36.0
+        },
+        "pump_degradation": {
+          "events": 5,
+          "recall": 1.0,
+          "mean_minutes_late": 126.0
+        },
+        "pump_failure": {
+          "events": 13,
+          "recall": 1.0,
+          "mean_minutes_late": 30.0
+        }
+      },
+      "correct_by_hours_since_onset": [
+        {
+          "hours_since_onset": "0-1",
+          "n": 23,
+          "correct": 0.739
+        },
+        {
+          "hours_since_onset": "1-2",
+          "n": 46,
+          "correct": 0.826
+        },
+        {
+          "hours_since_onset": "2-4",
+          "n": 92,
+          "correct": 0.957
+        },
+        {
+          "hours_since_onset": "4-8",
+          "n": 145,
+          "correct": 0.979
+        },
+        {
+          "hours_since_onset": "8-13",
+          "n": 90,
+          "correct": 1.0
+        }
+      ]
+    }
+  },
+  "calibration_bins_by_recipe": {
+    "sim": [
+      {
+        "p_mean": 0.472,
+        "observed": 1.0,
+        "n": 1
+      },
+      {
+        "p_mean": 0.609,
+        "observed": 0.84,
+        "n": 25
+      },
+      {
+        "p_mean": 0.786,
+        "observed": 0.936,
+        "n": 47
+      },
+      {
+        "p_mean": 0.912,
+        "observed": 0.927,
+        "n": 137
+      },
+      {
+        "p_mean": 0.989,
+        "observed": 0.994,
+        "n": 487
+      }
+    ],
+    "real": [
+      {
+        "p_mean": 0.469,
+        "observed": 0.167,
+        "n": 6
+      },
+      {
+        "p_mean": 0.63,
+        "observed": 0.909,
+        "n": 33
+      },
+      {
+        "p_mean": 0.768,
+        "observed": 1.0,
+        "n": 32
+      },
+      {
+        "p_mean": 0.922,
+        "observed": 0.933,
+        "n": 104
+      },
+      {
+        "p_mean": 0.981,
+        "observed": 0.977,
+        "n": 522
+      }
+    ],
+    "sim+real": [
+      {
+        "p_mean": 0.471,
+        "observed": 0.667,
+        "n": 3
+      },
+      {
+        "p_mean": 0.599,
+        "observed": 0.793,
+        "n": 29
+      },
+      {
+        "p_mean": 0.787,
+        "observed": 0.829,
+        "n": 41
+      },
+      {
+        "p_mean": 0.914,
+        "observed": 0.963,
+        "n": 108
+      },
+      {
+        "p_mean": 0.99,
+        "observed": 0.99,
+        "n": 516
+      }
+    ]
+  },
+  "notes": [
+    "Decision times are every 30 minutes after onset, so mean_minutes_late is on a 30-minute grid.",
+    "Windows inside an event where the equipment has not yet visibly changed count as wrong for every method.",
+    "All numbers pooled over five folds; each fold's model never saw the held-out system."
+  ]
+}
