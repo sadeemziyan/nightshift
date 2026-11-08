@@ -3,10 +3,10 @@
 This is one of the only scripts allowed to read answer_key.json (CLAUDE.md hard rule 2).
 The app, loader and API never import it for anything but offline checks.
 
-    python -m backend.engine.scorecard data/full_week
+    python -m backend.engine.scorecard data/full_week [--models]
 
 An answer-key event counts as found if detect() returned an event on the same asset and category
-whose time span overlaps the labelled window (it may start up to ONSET_SLACK_S early). Slow problems
+whose time span overlaps the labelled window (it may start up to ONSET_SLACK_S early; the onset error is reported separately). Slow problems
 (leaks, wear) ramp up gradually, so we do not demand the onset to the minute; instead we report
 "minutes late" = detected_unix - true onset (how long the operator waited) and "onset error" =
 our estimated onset - true onset. Extra detected events that match nothing are false alarms.
@@ -20,7 +20,7 @@ from pathlib import Path
 from .detect import detect
 from .loader import load
 
-ONSET_SLACK_S = 3600  # an event may start up to 1 h before the labelled onset and still count
+ONSET_SLACK_S = 3 * 3600  # a detection may start up to 3 h before the labelled onset and still be the same problem (onset error is reported separately)
 
 
 def load_answer_key(folder) -> list[dict]:
@@ -28,11 +28,12 @@ def load_answer_key(folder) -> list[dict]:
     return json.loads(path.read_text()) if path.exists() else []
 
 
-def score(folder, t: int | None = None, ds=None) -> dict:
+def score(folder, t: int | None = None, ds=None, detector=None) -> dict:
+    """detector: any function (ds, t) -> events. Default is the rule-based engine.detect."""
     ds = ds or load(folder)
     t = ds.now_unix if t is None else int(t)
     truth = [e for e in load_answer_key(folder) if e["onset_unix"] <= t]
-    found_events = detect(ds, t)
+    found_events = (detector or detect)(ds, t)
 
     matched_ids, rows = set(), []
     for e in truth:
@@ -71,16 +72,38 @@ def score(folder, t: int | None = None, ds=None) -> dict:
             "false_alarm_ids": [d["event_id"] for d in false_alarms]}
 
 
-def main():
-    folder = sys.argv[1] if len(sys.argv) > 1 else "data/full_week"
-    result = score(folder)
-    print(f"Scorecard for {result['dataset']} (t={result['t']})")
+def print_result(result: dict):
     for cat, s in result["by_category"].items():
         print(f"  {cat:18s} found {s['found']}/{s['labelled']}  recall={s['recall']}  "
               f"mean minutes late={s['mean_minutes_late']}  false alarms={s['false_alarms']}")
+    for cat in result["by_category"]:
+        errs = [abs(r["onset_error_min"]) for r in result["events"] if r["category"] == cat and r["found"]]
+        if errs:
+            print(f"  {cat:18s} median |onset error| = {sorted(errs)[len(errs) // 2]:.0f} min")
     missed = [r for r in result["events"] if not r["found"]]
     if missed:
         print("  not found:", ", ".join(f"{r['id']} ({r['category']})" for r in missed))
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    use_models = "--models" in sys.argv
+    folder = args[0] if args else "data/full_week"
+    detector = None
+    if use_models:
+        from backend.ml.detect.enrich import detect_with_models  # offline comparison only
+        detector = detect_with_models
+    if "--all" in sys.argv:   # every dataset folder that has an answer key (full_week and each snapshot)
+        root = Path(folder).parent if args else Path("data")
+        for f in sorted(p for p in root.iterdir() if (p / "answer_key.json").exists()):
+            r = score(f, detector=detector)
+            print(f"{f.name} (t={r['t']}) using {'rules + models' if use_models else 'rules only'}")
+            print_result(r)
+        return
+    result = score(folder, detector=detector)
+    result = score(folder, detector=detector)
+    print(f"Scorecard for {result['dataset']} (t={result['t']}) using {'rules + models' if use_models else 'rules only'}")
+    print_result(result)
 
 
 if __name__ == "__main__":
