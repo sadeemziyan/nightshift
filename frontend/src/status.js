@@ -80,3 +80,40 @@ export function fmtClock(unix) {
     timeZone: 'UTC', hour: '2-digit', minute: '2-digit', hour12: false,
   })
 }
+
+// "3.32" hours -> "3h 19m"
+export function fmtHours(h) {
+  if (h == null) return '-'
+  const mins = Math.max(0, Math.round(h * 60))
+  return `${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, '0')}m`
+}
+
+export const URGENCY = {
+  critical: { rank: 0, label: 'Critical', color: '#ef4444' },
+  high: { rank: 1, label: 'High', color: '#f97316' },
+  medium: { rank: 2, label: 'Medium', color: '#eab308' },
+  low: { rank: 3, label: 'Low', color: '#22c55e' },
+}
+
+export const CATEGORY = {
+  pump_failure: 'Pump failure',
+  pump_degradation: 'Pump wearing out',
+  pipeline_leak: 'Pipeline leak',
+}
+
+// Most urgent first; ties go to whichever tank hits shutdown sooner.
+export function sortAlerts(alerts) {
+  const rank = (a) => URGENCY[a.urgency]?.rank ?? 9
+  const eta = (a) => a.hours_to_limit?.p50 ?? Infinity
+  return [...alerts].sort((a, b) => rank(a) - rank(b) || eta(a) - eta(b))
+}
+
+// One short line saying what the app recommends for an alert.
+export function actionText(alert) {
+  const a = alert.recommended_actions?.[0]
+  if (!a) return ''
+  if (a.type === 'dispatch_truck') return `Send ${a.trucks} truck${a.trucks === 1 ? '' : 's'}`
+  if (a.type === 'shut_in_wells') return `Shut in ${a.wells.join(', ')} in ${a.start_after_min} min`
+  if (a.type === 'field_inspection') return 'Send an inspector'
+  return a.type.replace(/_/g, ' ')
+}

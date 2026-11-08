@@ -18,3 +18,5 @@ export const getTimeseries = (id, metric, { from, to }) =>
   request(`/timeseries?id=${encodeURIComponent(id)}&metric=${metric}&from=${from}&to=${to}`)
 export const getBaseline = (id, metric, t, hours = 6) =>
   request(`/model/baseline?id=${encodeURIComponent(id)}&metric=${metric}&t=${t}&hours=${hours}`)
+export const getForecast = (t) => request(`/forecast?t=${t}`)
+export const getPlan = (t) => request(`/plan?t=${t}`)
