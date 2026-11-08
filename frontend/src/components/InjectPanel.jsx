@@ -28,31 +28,29 @@ function InjectPanel({ facility, t, disabled, reason, onInject }) {
   }
 
   return (
-    <details className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-      <summary className="cursor-pointer font-semibold text-slate-200">
-        Inject a failure <span className="ml-2 rounded bg-red-500 px-2 py-0.5 text-xs font-bold text-white">SIMULATED</span>
+    <details className="panel group p-4">
+      <summary className="flex min-h-8 cursor-pointer list-none items-center gap-2 font-semibold text-fg [&::-webkit-details-marker]:hidden">
+        <svg viewBox="0 0 12 12" width="12" height="12" className="text-faint transition-transform group-open:rotate-90" aria-hidden="true">
+          <path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Inject a failure <span className="tag tag-sim ml-2">SIMULATED</span>
       </summary>
       <div className="mt-4 flex flex-wrap items-end gap-4">
         <div>
-          <label htmlFor="inject-kind" className="mb-1 block text-sm text-slate-400">Type</label>
-          <select
-            id="inject-kind"
-            value={kind}
-            onChange={(e) => setKind(e.target.value)}
-            className="rounded-lg border border-slate-700 bg-slate-950 px-3 py-2"
-          >
+          <label htmlFor="inject-kind" className="eyebrow mb-2 block text-muted">Type</label>
+          <select id="inject-kind" value={kind} onChange={(e) => setKind(e.target.value)} className="field">
             {KINDS.map((k) => (
               <option key={k.id} value={k.id}>{k.label}</option>
             ))}
           </select>
         </div>
-        <p className="text-sm text-slate-300">
-          On <span className="font-semibold">{asset ?? 'no facility selected'}</span>, starting now
+        <p className="pb-3 text-sm text-muted">
+          On <span className="num font-semibold text-fg">{asset ?? 'no facility selected'}</span>, starting now
         </p>
         {spec.severity && (
-          <div>
-            <label htmlFor="inject-severity" className="mb-1 block text-sm text-slate-400">
-              Severity {Math.round(severity * 100)}%
+          <div className="min-w-40">
+            <label htmlFor="inject-severity" className="eyebrow mb-1 block text-muted">
+              Severity <span className="num text-fg">{Math.round(severity * 100)}%</span>
             </label>
             <input
               id="inject-severity"
@@ -62,7 +60,8 @@ function InjectPanel({ facility, t, disabled, reason, onInject }) {
               step={0.1}
               value={severity}
               onChange={(e) => setSeverity(Number(e.target.value))}
-              className="accent-red-400"
+              className="slider"
+              style={{ '--fill': `${((severity - 0.1) / 0.9) * 100}%` }}
             />
           </div>
         )}
@@ -70,16 +69,16 @@ function InjectPanel({ facility, t, disabled, reason, onInject }) {
           type="button"
           onClick={submit}
           disabled={disabled || busy || !asset}
-          className="rounded-lg bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-400 disabled:opacity-40"
+          className="btn border-crit/70 text-fg hover:bg-crit/15"
         >
           {busy ? 'Injecting...' : 'Inject (simulated)'}
         </button>
       </div>
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="mt-4 text-sm text-faint">
         Nothing is written to the data files. Press play to watch the system find it.
         {disabled && reason ? ` Unavailable: ${reason}` : ''}
       </p>
-      {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-sm text-bad">{error}</p>}
     </details>
   )
 }
