@@ -15,8 +15,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-import numpy as np
-
 from backend.engine.loader import Dataset
 
 from . import baseline, enrich

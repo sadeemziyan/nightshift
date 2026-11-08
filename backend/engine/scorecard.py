@@ -170,7 +170,6 @@ def main():
             print_result(r)
         return
     result = score(folder, detector=detector)
-    result = score(folder, detector=detector)
     print(f"Scorecard for {result['dataset']} (t={result['t']}) using {'rules + models' if use_models else 'rules only'}")
     print_result(result)
 
