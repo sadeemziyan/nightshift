@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Query
@@ -322,7 +323,10 @@ def approve(body: ApproveBody):
         for s in pf["shut_in"]:
             messages.append(("field_operator",
                              f"Shut in {s['well']} at +{round(s['start_min'])} min and keep it off until the repair is done"))
-    dispatches = [{"to": to, "message": msg, "status": send_text(to, msg)} for to, msg in messages]
+    # texts go out in parallel so approving a plan with several messages isn't slow
+    with ThreadPoolExecutor(max_workers=max(1, len(messages))) as pool:
+        statuses = list(pool.map(lambda m: send_text(*m), messages))
+    dispatches = [{"to": to, "message": msg, "status": st} for (to, msg), st in zip(messages, statuses)]
     return {"approved": True, "plan_rank": plan["rank"], "summary": plan["summary"],
             "cost_usd": plan["cost_usd"], "dispatches": dispatches}
 
