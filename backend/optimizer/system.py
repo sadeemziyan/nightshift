@@ -143,6 +143,7 @@ def plan_system(network: dict, ops: dict, system_id: str, rows: list, t: int,
                 "peak_level_pct": plan.get("peak_level_pct"),
                 "tank_trips_in_min": plan.get("shutdown_in_min"),
                 "keeps_tank_under_shutdown": plan["keeps_under_shutdown"],
+                "actions": _actions(fid, plan),
             })
         # trucks first, then shut-ins, so the screen reads in dispatch order
         actions.sort(key=lambda a: {"dispatch_truck": 0, "shut_in_wells": 1}.get(a["type"], 2))

@@ -1,5 +1,31 @@
-from fastapi import FastAPI
+"""Nightshift API. Contract: docs/api.md. Run from the repo root:
+
+    uvicorn backend.api.main:app --reload
+
+The API never reads answer_key.json. Everything is computed from the loaded dataset's
+network.json, ops.json and telemetry.csv up to the time `t` (unix seconds).
+"""
+from __future__ import annotations
+
+import json
+import threading
+from pathlib import Path
+
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+from backend.api.notify import send_text
+from backend.engine.detect import detect
+from backend.engine.forecast import forecast
+from backend.engine.loader import Dataset, iso, load
+from backend.optimizer.system import plan_all
+
+ROOT = Path(__file__).resolve().parents[2]
+DATA_DIR = ROOT / "data"
 
 app = FastAPI(title="Nightshift API")
 
@@ -11,6 +37,321 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+# ---- errors are always {"error": "message"} ---------------------------------
+@app.exception_handler(StarletteHTTPException)
+async def _http_error(_, exc):
+    return JSONResponse({"error": str(exc.detail)}, status_code=exc.status_code)
+
+
+@app.exception_handler(RequestValidationError)
+async def _bad_request(_, exc):
+    first = exc.errors()[0] if exc.errors() else {}
+    where = ".".join(str(x) for x in first.get("loc", []) if x != "query")
+    return JSONResponse({"error": f"bad request: {where} {first.get('msg', '')}".strip()}, status_code=422)
+
+
+@app.exception_handler(Exception)
+async def _server_error(_, exc):
+    return JSONResponse({"error": f"{type(exc).__name__}: {exc}"}, status_code=500)
+
+
+# ---- loaded dataset ---------------------------------------------------------
+_lock = threading.Lock()
+_cache: dict[str, Dataset] = {}
+_current: dict[str, str | None] = {"name": None}
+_results: dict[tuple, object] = {}     # small memo so the UI can poll without recomputing
+
+
+def dataset_folders() -> list[str]:
+    if not DATA_DIR.exists():
+        return []
+    return sorted(p.name for p in DATA_DIR.iterdir()
+                  if p.is_dir() and (p / "network.json").exists() and (p / "telemetry.csv").exists())
+
+
+def _last_ts_unix(folder: Path) -> int | None:
+    """Last ts_unix in telemetry.csv without reading the whole file."""
+    path = folder / "telemetry.csv"
+    with open(path, "rb") as f:
+        f.seek(0, 2)
+        f.seek(max(0, f.tell() - 4096))
+        lines = [ln for ln in f.read().decode("utf-8", "ignore").splitlines() if ln.strip()]
+    for ln in reversed(lines):
+        parts = ln.split(",")
+        if len(parts) >= 2 and parts[1].isdigit():
+            return int(parts[1])
+    return None
+
+
+def current() -> Dataset:
+    name = _current["name"]
+    if name is None or name not in _cache:
+        raise HTTPException(400, "no dataset loaded: call POST /load?dataset=<id> first (see GET /datasets)")
+    return _cache[name]
+
+
+def _t(ds: Dataset, t: int | None) -> int:
+    return ds.now_unix if t is None else int(t)
+
+
+def _memo(kind: str, ds: Dataset, key: tuple, fn):
+    k = (kind, ds.folder.name, *key)
+    if k not in _results:
+        if len(_results) > 400:
+            _results.clear()
+        _results[k] = fn()
+    return _results[k]
+
+
+# ---- datasets ---------------------------------------------------------------
 @app.get("/")
 def hello():
-    return {"status": "ok", "app": "nightshift"}
+    return {"status": "ok", "app": "nightshift", "loaded": _current["name"]}
+
+
+@app.get("/datasets")
+def datasets():
+    out = []
+    for name in dataset_folders():
+        now = _last_ts_unix(DATA_DIR / name)
+        out.append({"id": name, "now_unix": now, "now_ts": iso(now),
+                    "loaded": name == _current["name"]})
+    return {"datasets": out}
+
+
+@app.post("/load")
+def load_dataset(dataset: str = Query(...)):
+    if dataset not in dataset_folders():
+        raise HTTPException(404, f"unknown dataset {dataset!r}; options: {', '.join(dataset_folders()) or 'none found in data/'}")
+    with _lock:
+        if dataset not in _cache:
+            _cache[dataset] = load(str(DATA_DIR / dataset))
+        _current["name"] = dataset
+    ds = _cache[dataset]
+    return {**{k: v for k, v in ds.summary().items()},
+            "models": {"status": "rules-only", "seconds": 0.0, "pumps_calibrated": 0}}
+
+
+@app.get("/network")
+def network():
+    return current().network
+
+
+# ---- state ------------------------------------------------------------------
+def _num(x, nd=2):
+    return None if x is None else round(float(x), nd)
+
+
+@app.get("/state")
+def state(t: int | None = None):
+    ds = current()
+    t = _t(ds, t)
+    out = {"t": t, "facilities": [], "tanks": [], "pumps": [], "pipelines": [], "wells": []}
+    for fid, fac in ds.facilities.items():
+        tank, pump, pipe = fac["tank"], fac["pump"], fac["pipeline"]
+        level = ds.latest(tank["id"], "level_pct", t)
+        cap = float(tank["capacity_bbl"])
+        lim = fac["limits"]
+        if level is None:
+            tank_state = None
+        elif lim["shutdown"] is not None and level >= lim["shutdown"]:
+            tank_state = "shutdown"
+        elif lim["warning"] is not None and level >= lim["warning"]:
+            tank_state = "warning"
+        else:
+            tank_state = "normal"
+        well_status = [ds.latest(w, "status", t) for w in fac["wells"]]
+        out["facilities"].append({
+            "id": fid, "system_id": fac["system_id"],
+            "inflow_bpd": _num(ds.latest(fid, "inflow_bpd", t), 1),
+            "shut_in": bool(well_status) and all(s is not None and s < 0.5 for s in well_status),
+        })
+        out["tanks"].append({
+            "id": tank["id"], "facility_id": fid, "level_pct": _num(level),
+            "volume_bbl": None if level is None else round(level / 100 * cap, 1),
+            "capacity_bbl": cap, "state": tank_state,
+        })
+        ps = ds.latest(pump["id"], "status", t)
+        out["pumps"].append({
+            "id": pump["id"], "facility_id": fid,
+            "status": None if ps is None else int(round(ps)),
+            "flow_bpd": _num(ds.latest(pump["id"], "flow_bpd", t), 1),
+            "discharge_psi": _num(ds.latest(pump["id"], "discharge_psi", t), 1),
+        })
+        out["pipelines"].append({
+            "id": pipe["id"], "facility_id": fid,
+            "receive_flow_bpd": _num(ds.latest(pipe["id"], "receive_flow_bpd", t), 1),
+            "pressure_psi": _num(ds.latest(pipe["id"], "pressure_psi", t), 1),
+        })
+        for w in fac["wells"]:
+            st = ds.latest(w, "status", t)
+            out["wells"].append({
+                "id": w, "facility_id": fid,
+                "status": None if st is None else int(round(st)),
+                "water_bpd": _num(ds.latest(w, "water_bpd", t), 1),
+            })
+    return out
+
+
+# ---- forecast and plans -----------------------------------------------------
+def _events(ds: Dataset, t: int) -> list[dict]:
+    return _memo("events", ds, (t,), lambda: detect(ds, t))
+
+
+def _forecast_rows(ds: Dataset, t: int) -> list[dict]:
+    return _memo("forecast", ds, (t,), lambda: forecast(ds, t, _events(ds, t)))
+
+
+def _plans(ds: Dataset, t: int) -> dict:
+    return _memo("plan", ds, (t,), lambda: plan_all(ds.network, ds.ops, _forecast_rows(ds, t), t))
+
+
+@app.get("/forecast")
+def forecast_endpoint(t: int | None = None):
+    ds = current()
+    t = _t(ds, t)
+    return {"t": t, "forecasts": _forecast_rows(ds, t)}
+
+
+@app.get("/plan")
+def plan_endpoint(t: int | None = None, risk: float | None = Query(None, ge=0, le=1)):
+    # `risk` is accepted now so the contract is stable; the risk-aware planner (M5) comes later.
+    ds = current()
+    return _plans(ds, _t(ds, t))
+
+
+# ---- alerts -----------------------------------------------------------------
+def _lost_revenue_per_hour(ds: Dataset, facility_id: str) -> float:
+    prices = ds.ops["prices"]
+    cfg = ds.facility(facility_id)["well_cfg"]
+    per_day = sum(w["oil_bpd"] * prices["oil_per_bbl"] + w["gas_mcfd"] * prices["gas_per_mcf"] for w in cfg.values())
+    return per_day / 24.0
+
+
+@app.get("/alerts")
+def alerts(t: int | None = None, include_resolved: bool = False):
+    ds = current()
+    t = _t(ds, t)
+    forecasts = {r["event_id"]: r for r in _forecast_rows(ds, t)}
+    actions_by_event: dict = {}
+    for sysplan in _plans(ds, t)["systems"]:
+        if sysplan["plans"]:
+            for pf in sysplan["plans"][0]["per_facility"]:
+                actions_by_event[pf["event_id"]] = pf["actions"]
+
+    rows = []
+    for ev in _events(ds, t):
+        ongoing = ev["status"] == "ongoing"
+        if not ongoing and not include_resolved:
+            continue
+        fac = ds.facility(ev["facility_id"])
+        fc = forecasts.get(ev["event_id"])
+        if ev["category"] == "pump_failure":
+            actions = actions_by_event.get(ev["event_id"], []) if ongoing else []
+            hours = fc["hours_to_limit"] if fc else {"p50": None, "p10": None, "p90": None}
+        else:
+            actions = [{"type": "field_inspection", "asset_id": ev["asset_id"]}] if ongoing else []
+            hours = None
+        row = {
+            **ev,
+            "level_pct": _num(ds.latest(fac["tank"]["id"], "level_pct", t)),
+            "hours_to_limit": hours,
+            "recommended_actions": actions,
+        }
+        rows.append(row)
+
+    def sort_key(r):
+        is_pf = r["category"] == "pump_failure" and r["status"] == "ongoing"
+        h = (r["hours_to_limit"] or {}).get("p50") if is_pf else None
+        return (0 if is_pf else 1 if r["status"] == "ongoing" else 2,
+                float("inf") if h is None else h,
+                -_lost_revenue_per_hour(ds, r["facility_id"]))
+
+    rows.sort(key=sort_key)
+    for i, r in enumerate(rows, 1):
+        r["order"] = i
+    return {"t": t, "alerts": rows}
+
+
+# ---- time series ------------------------------------------------------------
+UNITS = {"level_pct": "%", "flow_bpd": "bpd", "water_bpd": "bpd", "inflow_bpd": "bpd",
+         "receive_flow_bpd": "bpd", "pressure_psi": "psi", "discharge_psi": "psi", "status": ""}
+
+
+@app.get("/timeseries")
+def timeseries(id: str, metric: str, t: int | None = None, from_: int | None = Query(None, alias="from"),
+               to: int | None = None):
+    ds = current()
+    end = to if to is not None else _t(ds, t)
+    start = from_ if from_ is not None else end - 24 * 3600
+    s = ds.series(id, metric, end)
+    if s.empty:
+        raise HTTPException(404, f"no data for asset {id!r} metric {metric!r}")
+    s = s[s.index >= start]
+    return {"asset_id": id, "metric": metric, "unit": UNITS.get(metric, ""),
+            "points": [[int(k), round(float(v), 3)] for k, v in s.items()]}
+
+
+# ---- approve ----------------------------------------------------------------
+class ApproveBody(BaseModel):
+    event_id: str
+    plan_rank: int = 1
+    t: int | None = None     # ours: the console's current time; defaults to the dataset's "now"
+
+
+@app.post("/approve")
+def approve(body: ApproveBody):
+    ds = current()
+    t = _t(ds, body.t)
+    syst = next((s for s in _plans(ds, t)["systems"] if body.event_id in s["event_ids"]), None)
+    if syst is None:
+        raise HTTPException(404, f"no pump failure in progress with event_id {body.event_id!r} at t={t}")
+    if not 1 <= body.plan_rank <= len(syst["plans"]):
+        raise HTTPException(404, f"plan_rank must be 1 to {len(syst['plans'])}")
+    plan = syst["plans"][body.plan_rank - 1]
+
+    cap = ds.ops["emergency_trucking"]["truck_capacity_bbl"]
+    messages = []
+    for pf in plan["per_facility"]:
+        if pf["trucks"]:
+            first = pf["trip_arrivals"][0]["arrives_ts"] if pf["trip_arrivals"] else "?"
+            for n in range(1, pf["trucks"] + 1):
+                messages.append(("truck_driver",
+                                 f"Truck {n} -> {pf['facility_id']}, {cap:g} bbl x {pf['trips_per_truck']} trip(s), arrive {first}"))
+        for s in pf["shut_in"]:
+            messages.append(("field_operator",
+                             f"Shut in {s['well']} at +{round(s['start_min'])} min and keep it off until the repair is done"))
+    dispatches = [{"to": to, "message": msg, "status": send_text(to, msg)} for to, msg in messages]
+    return {"approved": True, "plan_rank": plan["rank"], "summary": plan["summary"],
+            "cost_usd": plan["cost_usd"], "dispatches": dispatches}
+
+
+# ---- models (Hamza's ML track fills these in; rules only for now) -----------
+@app.get("/model/status")
+def model_status():
+    ds = current()
+    return {"dataset": ds.folder.name, "status": "rules-only",
+            "models": {m: {"ready": False, "fit_seconds": None} for m in ("M1", "M2", "M3", "M4")},
+            "pumps_calibrated": 0, "pumps_total": len(ds.facilities)}
+
+
+@app.get("/model/eval")
+def model_eval():
+    path = ROOT / "docs" / "model_eval.json"
+    if path.exists():
+        return json.loads(path.read_text())
+    return {"generated_unix": None, "method": "leave-one-system-out",
+            "folds": [], "comparison": {k: {"recall": None, "mean_minutes_late": None}
+                                        for k in ("rules", "models", "ensemble")},
+            "calibration_bins": []}
+
+
+@app.get("/model/baseline")
+def model_baseline(id: str, metric: str = "flow_bpd", t: int | None = None, hours: float = 24):
+    raise HTTPException(501, "learned baselines (M1) are not built yet")
+
+
+@app.post("/simulate/inject")
+def simulate_inject():
+    raise HTTPException(501, "fault injection is not built yet")
