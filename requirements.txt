@@ -7,3 +7,4 @@ pulp
 scikit-learn
 scipy
 joblib
+httpx
