@@ -179,6 +179,51 @@ def test_blend_adds_a_second_opinion_and_falls_back_without_the_model():
         blend._BUNDLE.update(saved)
 
 
+def test_breaking_a_model_on_purpose_never_crashes_the_app():
+    """Hard rule 7: if M1 or M3 fails, the app still returns the rule-based alerts."""
+    from unittest import mock
+
+    from backend.engine.detect import detect
+    from backend.ml.detect import blend, enrich
+    ds, _, _ = world()
+    rule_ids = sorted(e["event_id"] for e in detect(ds))
+    saved = dict(blend._BUNDLE)
+
+    class Broken:
+        classes_ = np.array(classifier.CLASSES)
+
+        def predict_proba(self, X):
+            raise RuntimeError("model exploded")
+
+    try:
+        # 1. M1 cannot be fitted
+        enrich._CACHE.clear()
+        with mock.patch.object(baseline, "fit", side_effect=RuntimeError("M1 exploded")):
+            ev = blend.detect_with_m3(ds)
+        assert sorted(e["event_id"] for e in ev) == rule_ids and all(e["source"] == "rules" for e in ev)
+        enrich._CACHE.clear()
+        # 2. M3 raises while predicting
+        blend._BUNDLE["b"] = {"model": Broken(), "classes": classifier.CLASSES, "temperature": 1.0}
+        ev = blend.detect_with_m3(ds)
+        assert len(ev) == len(rule_ids) and all("m3" not in e for e in ev)
+        assert blend.early_warnings(ds) == []
+        # 3. the saved model file is junk
+        blend._BUNDLE.clear()
+        junk = ROOT / "backend" / "ml" / "detect" / "plots" / "_junk_model.joblib"
+        junk.parent.mkdir(exist_ok=True)
+        junk.write_bytes(b"not a model")
+        try:
+            with mock.patch.object(blend, "MODEL_PATH", junk):
+                ev = blend.detect_with_m3(ds)
+        finally:
+            junk.unlink()
+        assert len(ev) == len(rule_ids) and all("m3" not in e for e in ev)
+    finally:
+        enrich._CACHE.clear()
+        blend._BUNDLE.clear()
+        blend._BUNDLE.update(saved)
+
+
 def test_app_modules_do_not_import_the_training_script():
     for name in ("blend.py", "m3_core.py", "enrich.py", "features.py", "simulate.py"):
         text = (ROOT / "backend" / "ml" / "detect" / name).read_text()

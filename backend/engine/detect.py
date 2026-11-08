@@ -358,7 +358,6 @@ def detect_pump_degradation(ds: Dataset, t: int | None = None) -> list[dict]:
         z, nm = zz
         zs_flow = _smooth(z["pflow"]).to_numpy()     # pump output: wear pushes it DOWN
         zs_dis = _smooth(z["pdis"]).to_numpy()       # discharge pressure falls with it
-        zs_psi = _smooth(z["rpsi"]).to_numpy()
         pump = fac["pump"]
         for lo, a, hi in stretches(-zs_flow, raw=-z["pflow"].to_numpy()):
             # A leak lowers pipeline pressure while the pump stays normal; wear is the pump itself.

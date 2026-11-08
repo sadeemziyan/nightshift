@@ -15,8 +15,6 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-import numpy as np
-
 from backend.engine.loader import Dataset
 
 from . import baseline, enrich
@@ -94,11 +92,16 @@ def detect_with_m3(ds: Dataset, t: int | None = None) -> list[dict]:
     return out
 
 
-def early_warnings(ds: Dataset, t: int | None = None, threshold: float = 0.8) -> list[dict]:
-    """Facilities where M3 sees a problem with probability >= threshold but no rule event is ongoing for that category."""
+def early_warnings(ds: Dataset, t: int | None = None, threshold: float = 0.8, min_history_h: float = 24.0) -> list[dict]:
+    """Facilities where M3 sees a problem with probability >= threshold but no rule event is ongoing for that category.
+
+    Nothing is raised until the dataset has min_history_h hours of readings before t: with less, the learned normal is too
+    thin to trust (in the full-week replay the false warnings all came from the first day and a half)."""
     t = ds.now_unix if t is None else int(t)
     bundle = _bundle()
     if bundle is None:
+        return []
+    if t - int(ds.telemetry["ts_unix"].min()) < min_history_h * 3600:
         return []
     try:
         models = enrich._models(ds, t)

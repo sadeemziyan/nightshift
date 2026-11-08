@@ -1,5 +1,5 @@
 {
-  "generated_unix": 1794117029,
+  "generated_unix": 1794119865,
   "method": "leave-one-system-out",
   "folds": [
     {
@@ -15,7 +15,7 @@
     },
     {
       "held_out_system": "S2",
-      "precision": 0.988,
+      "precision": 1.0,
       "recall": 1.0,
       "mean_minutes_late": 54.0,
       "events": 5,
@@ -48,7 +48,7 @@
     },
     {
       "held_out_system": "S5",
-      "precision": 1.0,
+      "precision": 0.986,
       "recall": 1.0,
       "mean_minutes_late": 60.0,
       "events": 4,
@@ -74,29 +74,24 @@
   },
   "calibration_bins": [
     {
-      "p_mean": 0.472,
-      "observed": 1.0,
-      "n": 1
+      "p_mean": 0.611,
+      "observed": 0.812,
+      "n": 16
     },
     {
-      "p_mean": 0.609,
-      "observed": 0.84,
-      "n": 25
+      "p_mean": 0.78,
+      "observed": 0.881,
+      "n": 42
     },
     {
-      "p_mean": 0.786,
-      "observed": 0.936,
-      "n": 47
+      "p_mean": 0.91,
+      "observed": 0.951,
+      "n": 143
     },
     {
-      "p_mean": 0.912,
-      "observed": 0.927,
-      "n": 137
-    },
-    {
-      "p_mean": 0.989,
-      "observed": 0.994,
-      "n": 487
+      "p_mean": 0.99,
+      "observed": 0.99,
+      "n": 496
     }
   ],
   "headline_model": "gradient-boosted trees trained on simulated faults only (never sees the answer key)",
@@ -218,16 +213,16 @@
       "events": 23,
       "events_found": 23,
       "recall": 1.0,
-      "mean_minutes_late": 53.5,
+      "mean_minutes_late": 54.8,
       "precision": 1.0,
       "false_alarm_rate": 0.0,
-      "accuracy": 0.961,
-      "macro_f1": 0.958,
+      "accuracy": 0.96,
+      "macro_f1": 0.957,
       "by_category": {
         "pipeline_leak": {
           "events": 5,
           "recall": 1.0,
-          "mean_minutes_late": 42.0
+          "mean_minutes_late": 48.0
         },
         "pump_degradation": {
           "events": 5,
@@ -244,7 +239,7 @@
         {
           "hours_since_onset": "0-1",
           "n": 23,
-          "correct": 0.739
+          "correct": 0.696
         },
         {
           "hours_since_onset": "1-2",
@@ -273,10 +268,10 @@
       "events_found": 23,
       "recall": 1.0,
       "mean_minutes_late": 52.2,
-      "precision": 0.987,
-      "false_alarm_rate": 0.0166,
-      "accuracy": 0.967,
-      "macro_f1": 0.965,
+      "precision": 0.99,
+      "false_alarm_rate": 0.0133,
+      "accuracy": 0.968,
+      "macro_f1": 0.967,
       "by_category": {
         "pipeline_leak": {
           "events": 5,
@@ -380,83 +375,78 @@
   "calibration_bins_by_recipe": {
     "sim": [
       {
-        "p_mean": 0.472,
-        "observed": 1.0,
-        "n": 1
+        "p_mean": 0.611,
+        "observed": 0.812,
+        "n": 16
       },
       {
-        "p_mean": 0.609,
-        "observed": 0.84,
-        "n": 25
+        "p_mean": 0.78,
+        "observed": 0.881,
+        "n": 42
       },
       {
-        "p_mean": 0.786,
-        "observed": 0.936,
-        "n": 47
-      },
-      {
-        "p_mean": 0.912,
-        "observed": 0.927,
-        "n": 137
-      },
-      {
-        "p_mean": 0.989,
-        "observed": 0.994,
-        "n": 487
-      }
-    ],
-    "real": [
-      {
-        "p_mean": 0.469,
-        "observed": 0.167,
-        "n": 6
-      },
-      {
-        "p_mean": 0.63,
-        "observed": 0.909,
-        "n": 33
-      },
-      {
-        "p_mean": 0.768,
-        "observed": 1.0,
-        "n": 32
-      },
-      {
-        "p_mean": 0.922,
-        "observed": 0.933,
-        "n": 104
-      },
-      {
-        "p_mean": 0.981,
-        "observed": 0.977,
-        "n": 522
-      }
-    ],
-    "sim+real": [
-      {
-        "p_mean": 0.471,
-        "observed": 0.667,
-        "n": 3
-      },
-      {
-        "p_mean": 0.599,
-        "observed": 0.793,
-        "n": 29
-      },
-      {
-        "p_mean": 0.787,
-        "observed": 0.829,
-        "n": 41
-      },
-      {
-        "p_mean": 0.914,
-        "observed": 0.963,
-        "n": 108
+        "p_mean": 0.91,
+        "observed": 0.951,
+        "n": 143
       },
       {
         "p_mean": 0.99,
         "observed": 0.99,
-        "n": 516
+        "n": 496
+      }
+    ],
+    "real": [
+      {
+        "p_mean": 0.441,
+        "observed": 0.5,
+        "n": 2
+      },
+      {
+        "p_mean": 0.63,
+        "observed": 0.83,
+        "n": 47
+      },
+      {
+        "p_mean": 0.788,
+        "observed": 1.0,
+        "n": 8
+      },
+      {
+        "p_mean": 0.916,
+        "observed": 0.948,
+        "n": 97
+      },
+      {
+        "p_mean": 0.98,
+        "observed": 0.974,
+        "n": 543
+      }
+    ],
+    "sim+real": [
+      {
+        "p_mean": 0.444,
+        "observed": 0.0,
+        "n": 1
+      },
+      {
+        "p_mean": 0.619,
+        "observed": 0.714,
+        "n": 21
+      },
+      {
+        "p_mean": 0.806,
+        "observed": 0.912,
+        "n": 34
+      },
+      {
+        "p_mean": 0.914,
+        "observed": 0.939,
+        "n": 114
+      },
+      {
+        "p_mean": 0.99,
+        "observed": 0.991,
+        "n": 527
       }
     ]
   },
