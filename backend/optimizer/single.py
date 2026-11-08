@@ -18,9 +18,11 @@ Time is measured in minutes from "now", the moment the plan is acted on.
 
 Modelling rules (see the README of the challenge for the first four):
   1. Tank level rises by the water of every flowing well; the pump is dead.
-  2. A truck trip removes up to truck_capacity_bbl at the moment it arrives.
-     The first truck arrives response_min after it is called; each truck can
-     return every cycle_min. fleet_size trucks work in parallel.
+  2. A plan is N trucks x K trips each. All N trucks are called together and
+     arrive together response_min later; each can return every cycle_min, so
+     trip arrivals are response_min, response_min + cycle_min, ... (SPEC.md).
+     A trip removes up to truck_capacity_bbl when it arrives, and every trip
+     must arrive before the repair ends. N can't exceed fleet_size.
   3. A shut-in well produces no water, oil or gas from its shut-in minute until
      the repair is done.
   4. A plan is valid only if the tank never exceeds the shutdown level before
@@ -40,6 +42,7 @@ from pathlib import Path
 
 EPS = 1e-9
 MIN_PER_DAY = 1440.0
+MAX_TRIPS_PER_TRUCK = 50
 
 
 # ---------------------------------------------------------------------------
@@ -196,6 +199,17 @@ def trip_arrivals(p: TankProblem) -> list:
     return arrivals
 
 
+def arrivals_for(p: TankProblem, trucks: int, trips: int) -> list:
+    """Arrival minutes for `trucks` trucks making `trips` trips each (SPEC.md)."""
+    out = []
+    for j in range(trips):
+        t = p.response_min + j * p.cycle_min
+        if t >= p.repair_remaining_min - EPS:
+            return None  # a trip would arrive after the repair: not allowed
+        out.extend([t] * trucks)
+    return out
+
+
 def _walk(p: TankProblem, arrivals: list, starts: dict, removed: list | None = None):
     """Walk the tank level through every event. Returns (ok, peak_bbl).
 
@@ -258,6 +272,8 @@ def do_nothing(p: TankProblem) -> dict:
             "kind": "do_nothing",
             "cost": 0.0,
             "cost_math": "tank stays under shutdown until the repair: no action needed",
+            "trucks": 0,
+            "trips_per_truck": 0,
             "trips": 0,
             "trip_arrivals": [],
             "shut_in": [],
@@ -273,6 +289,8 @@ def do_nothing(p: TankProblem) -> dict:
         "kind": "do_nothing",
         "cost": cost,
         "cost_math": f"all wells off {dark:.1f} min × {_money(per_hour)}/h",
+        "trucks": 0,
+        "trips_per_truck": 0,
         "trips": 0,
         "trip_arrivals": [],
         "shut_in": [],
@@ -370,7 +388,8 @@ def _money(x: float) -> str:
     return f"${x:,.2f}" if abs(x - round(x)) > 0.005 else f"${x:,.0f}"
 
 
-def _make_plan(p: TankProblem, n_trips: int, arrivals: list, starts: dict) -> dict:
+def _make_plan(p: TankProblem, trucks: int, trips_per_truck: int, arrivals: list, starts: dict) -> dict:
+    n_trips = trucks * trips_per_truck
     R = p.repair_remaining_min
     removed: list = []
     ok, peak = _walk(p, arrivals, starts, removed)
@@ -396,14 +415,15 @@ def _make_plan(p: TankProblem, n_trips: int, arrivals: list, starts: dict) -> di
     parts = []
     if n_trips:
         parts.append(f"{n_trips} trip{'s' if n_trips != 1 else ''} × {_money(p.cost_per_trip)}")
+    truck_label = f"{trucks} truck{'s' if trucks != 1 else ''}, {trips_per_truck} trip{'s' if trips_per_truck != 1 else ''}"
     for s in shut_in:
         parts.append(f"{s['well']} off {s['minutes']:.0f} min × {_money(s['rate_per_hour'])}/h")
 
     if n_trips and shut_in:
-        name = f"Send {n_trips} truck trip{'s' if n_trips != 1 else ''} + shut in wells"
+        name = f"{truck_label} + shut in wells"
         kind = "trucks_and_wells"
     elif n_trips:
-        name = f"Send {n_trips} truck trip{'s' if n_trips != 1 else ''}"
+        name = truck_label
         kind = "trucks"
     else:
         name = "Shut in wells early"
@@ -414,6 +434,8 @@ def _make_plan(p: TankProblem, n_trips: int, arrivals: list, starts: dict) -> di
         "kind": kind,
         "cost": total,
         "cost_math": " + ".join(parts),
+        "trucks": trucks,
+        "trips_per_truck": trips_per_truck,
         "trips": n_trips,
         "trip_arrivals": [
             {"arrives_in_min": t, "removes_bbl": take} for t, take in removed
@@ -426,23 +448,45 @@ def _make_plan(p: TankProblem, n_trips: int, arrivals: list, starts: dict) -> di
 
 
 def optimize(p: TankProblem, step_min: int = 1) -> dict:
-    """Return every option ranked cheapest first, with do-nothing as baseline."""
+    """Return every option ranked cheapest first, with do-nothing as baseline.
+
+    Options: do nothing, or N trucks x K trips (N <= fleet_size, every trip
+    arriving before the repair ends), each with the cheapest well shut-ins
+    that still keep the tank under shutdown.
+    """
     baseline = do_nothing(p)
     plans = [baseline]
 
-    arrivals_all = trip_arrivals(p)
-    for n in range(0, len(arrivals_all) + 1):
-        arrivals = arrivals_all[:n]
-        found = min_cost_wells(p, arrivals, step_min)
-        if found is None:
-            continue
-        _, starts = found
-        if n == 0 and not starts:
-            break  # nothing needed at all; baseline already says so
-        plans.append(_make_plan(p, n, arrivals, starts))
-        if not starts:
-            break  # more trucks would only add cost
+    if p.level_bbl >= p.limit_bbl - EPS:
+        # already at shutdown: the facility is shut until the repair, nothing helps
+        return _result(p, baseline, plans)
 
+    if not _walk(p, [], {})[0]:
+        found = min_cost_wells(p, [], step_min)
+        if found is not None:
+            plans.append(_make_plan(p, 0, 0, [], found[1]))
+        best_trucks_only = None
+        for trucks in range(1, p.fleet_size + 1):
+            if best_trucks_only is not None and trucks * p.cost_per_trip >= best_trucks_only:
+                break  # even one trip each would cost more than a plan that already works
+            for trips in range(1, MAX_TRIPS_PER_TRUCK + 1):
+                arrivals = arrivals_for(p, trucks, trips)
+                if arrivals is None:
+                    break  # more trips would arrive after the repair
+                found = min_cost_wells(p, arrivals, step_min)
+                if found is None:
+                    continue
+                plans.append(_make_plan(p, trucks, trips, arrivals, found[1]))
+                if not found[1]:
+                    cost = trucks * trips * p.cost_per_trip
+                    if best_trucks_only is None or cost < best_trucks_only:
+                        best_trucks_only = cost
+                    break  # trucks alone are enough; more trips only add cost
+    return _result(p, baseline, plans)
+
+
+def _result(p: TankProblem, baseline: dict, plans: list) -> dict:
+    plans = [pl for pl in plans if pl["kind"] != "do_nothing" or pl is baseline]
     plans.sort(key=lambda x: (x["cost"], x["trips"], len(x["shut_in"])))
     return {
         "facility": p.facility_id,

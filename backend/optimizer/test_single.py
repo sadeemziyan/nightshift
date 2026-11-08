@@ -16,8 +16,8 @@ import itertools
 import math
 
 from .single import (
-    TankProblem, Well, build_problem, do_nothing, min_cost_wells, optimize,
-    shutdown_in_min, trip_arrivals,
+    TankProblem, Well, arrivals_for, build_problem, do_nothing, min_cost_wells,
+    optimize, shutdown_in_min, trip_arrivals,
 )
 
 OIL, GAS = 60.0, 3.0
@@ -48,6 +48,7 @@ def test_eog_example():
 
     assert round(res["do_nothing_cost"]) == 5016
     assert res["best"]["kind"] == "trucks"
+    assert (res["best"]["trucks"], res["best"]["trips_per_truck"]) == (1, 1)
     assert res["best"]["trips"] == 1
     assert round(res["best"]["cost"]) == 905
     assert round(by_kind["wells"]["cost"]) == 1958
@@ -97,18 +98,24 @@ def test_truck_arrivals():
 # -- brute force: try every truck count and every shut-in time on a grid -----
 
 def brute_force(p: TankProblem, step: int) -> float:
+    """Every (trucks, trips-per-truck) pair x every shut-in time on a grid."""
     from .single import _walk, _wells_cost
     R = p.repair_remaining_min
     grid = [None] + list(range(0, int(R // step) * step + 1, step))
     grid = [g for g in grid if g is None or g < R]
-    arrivals_all = trip_arrivals(p)
     best = do_nothing(p)["cost"]
-    for n in range(len(arrivals_all) + 1):
-        arrivals = arrivals_all[:n]
+    options = [(0, 0)]
+    for trucks in range(1, p.fleet_size + 1):
+        for trips in range(1, 12):
+            if arrivals_for(p, trucks, trips) is None:
+                break
+            options.append((trucks, trips))
+    for trucks, trips in options:
+        arrivals = arrivals_for(p, trucks, trips)
         for combo in itertools.product(grid, repeat=len(p.wells)):
             starts = {w.id: s for w, s in zip(p.wells, combo) if s is not None}
             if _walk(p, arrivals, starts)[0]:
-                best = min(best, n * p.cost_per_trip + _wells_cost(p, starts))
+                best = min(best, trucks * trips * p.cost_per_trip + _wells_cost(p, starts))
     return best
 
 

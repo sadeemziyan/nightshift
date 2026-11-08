@@ -33,7 +33,7 @@ def well_water_at(folder, events, network):
     return latest
 
 
-def main(folder):
+def main(folder, use_baseline=False):
     folder = Path(folder)
     network = json.load(open(folder / "network.json"))
     ops = json.load(open(folder / "ops.json"))
@@ -47,7 +47,7 @@ def main(folder):
         fleet = ops_sys["emergency_fleet_size"]
         busy = sum(n for s, until, n in used if s == sysid and until > e["onset_unix"])
         free = max(fleet - busy, 0)
-        p = build_problem(network, ops, e["facility"], level_pct=e["level_pct"], water_bpd=water[e["id"]])
+        p = build_problem(network, ops, e["facility"], level_pct=e["level_pct"], water_bpd=None if use_baseline else water[e["id"]])
         from dataclasses import replace
         p = replace(p, fleet_size=free)
         res = optimize(p)
@@ -56,8 +56,10 @@ def main(folder):
         m = re.search(r"~\$([\d,]+)", ref)
         ref_cost = float(m.group(1).replace(",", "")) if m else 0.0
         mt = re.search(r"(\d+) truck, (\d+) trip", ref)
-        if best["trips"]:
-            used.append((sysid, e["onset_unix"] + p.cycle_min * 60 * max(1, best["trips"] // max(free, 1)), min(best["trips"], free)))
+        if best["trucks"]:
+            # SPEC: a truck is busy until its last trip has arrived and it is back, cycle_min later
+            busy_min = p.response_min + best["trips_per_truck"] * p.cycle_min
+            used.append((sysid, e["onset_unix"] + busy_min * 60, best["trucks"]))
         shut = "; ".join(f"{s['well']}@+{s['start_min']:.0f}" for s in best["shut_in"])
         ok = abs(best["cost"] - ref_cost) <= max(25, 0.01 * ref_cost)
         print(f"{e['id']:9} {e['facility']:14} free {free}/{fleet}  ref ${ref_cost:>7,.0f}  mine ${best['cost']:>8,.0f}  {'OK ' if ok else 'DIFF'}  trips {best['trips']} {shut}")
@@ -66,4 +68,4 @@ def main(folder):
             print("          mine:", best["name"], "|", best["cost_math"])
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], use_baseline="--baseline" in sys.argv)
